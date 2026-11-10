@@ -102,8 +102,13 @@ final class MineStore {
 
     init(jobID: String) { self.jobID = jobID }
 
+    /// Grades shown in the swipe queue; empty = all.
+    var grades: Set<String> = []
+    var availableGrades: [String] { Array(Set(candidates.map(\.grade))).sorted() }
+    func remaining(_ g: String) -> Int { candidates.filter { $0.grade == g && $0.decision == nil && !$0.contacted }.count }
+
     var queue: [Candidate] {
-        candidates.filter { $0.decision == nil && !$0.contacted }
+        candidates.filter { $0.decision == nil && !$0.contacted && (grades.isEmpty || grades.contains($0.grade)) }
             .sorted { ($0.grade, $0.name) < ($1.grade, $1.name) }
     }
     func list(_ d: Decision) -> [Candidate] { candidates.filter { $0.decision == d } }
@@ -150,6 +155,7 @@ struct MineView: View {
     var body: some View {
         VStack(spacing: 14) {
             counters
+            gradeFilter
             if let e = store.error {
                 Label(e, systemImage: "exclamationmark.triangle.fill").font(.footnote).foregroundStyle(JobStatus.verify.color)
             }
@@ -186,6 +192,36 @@ struct MineView: View {
         .task { await store.load() }
         .refreshable { await store.load() }
         .sheet(item: $showList) { d in DecisionList(store: store, decision: d) }
+    }
+
+    private var gradeFilter: some View {
+        HStack(spacing: 8) {
+            gradeChip("הכל", on: store.grades.isEmpty) { store.grades = [] }
+            ForEach(store.availableGrades, id: \.self) { g in
+                gradeChip("\(g) · \(store.remaining(g))", on: store.grades.contains(g)) {
+                    if store.grades.contains(g) { store.grades.remove(g) } else { store.grades.insert(g) }
+                    UserDefaults.standard.set(Array(store.grades), forKey: "mineGrades.\(store.jobID)")
+                }
+            }
+            Spacer()
+        }
+        .onAppear {
+            store.grades = Set(UserDefaults.standard.stringArray(forKey: "mineGrades.\(store.jobID)") ?? [])
+        }
+    }
+
+    private func gradeChip(_ title: String, on: Bool, action: @escaping () -> Void) -> some View {
+        Button {
+            withAnimation(.snappy) { action() }
+        } label: {
+            Text(title)
+                .font(.subheadline.weight(.semibold)).monospacedDigit()
+                .padding(.horizontal, 12).padding(.vertical, 6)
+                .foregroundStyle(on ? .white : .primary)
+                .background(on ? AnyShapeStyle(Theme.tint) : AnyShapeStyle(Color(.secondarySystemGroupedBackground)), in: Capsule())
+        }
+        .buttonStyle(.plain)
+        .sensoryFeedback(.selection, trigger: on)
     }
 
     private var counters: some View {
