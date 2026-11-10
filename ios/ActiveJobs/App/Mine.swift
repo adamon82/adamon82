@@ -177,6 +177,8 @@ struct MineView: View {
                 }
             }
             .frame(maxWidth: .infinity, minHeight: 440)
+            // Swipe uses physical directions: finger right = card right = ✓. RTL would mirror the offset.
+            .environment(\.layoutDirection, .leftToRight)
 
             actions
         }
@@ -313,8 +315,8 @@ struct CandidateCard: View {
                         Text(line).font(.footnote).lineLimit(1)
                     }
                 }
-                .environment(\.layoutDirection, .leftToRight)
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .environment(\.layoutDirection, .leftToRight)
             }
 
             Spacer(minLength: 0)
@@ -325,6 +327,7 @@ struct CandidateCard: View {
             }
         }
         .padding(18)
+        .environment(\.layoutDirection, .rightToLeft)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 24))
         .shadow(color: .black.opacity(0.06), radius: 14, y: 6)
