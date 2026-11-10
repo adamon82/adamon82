@@ -45,3 +45,13 @@ targets:
         CFBundleDisplayName: משרות
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
+schemes:
+  ActiveJobs:
+    build:
+      targets:
+        ActiveJobs: all
+        ActiveJobsWidget: all
+    run:
+      config: Debug
+    archive:
+      config: Release
