@@ -1,0 +1,356 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Talpiot Young Pool</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800&display=swap">
+<style>
+/* layout: two views over one shared decision store. #swipe = one card at a time for the phone; #web = sortable table for the desk */
+:root{--bg:#0f1418;--sf:#172027;--sf2:#1e2a33;--ln:#2a3742;--fg:#e6edf2;--mu:#8fa1ae;--ac:#5fb3c9;--A:#7fcf8f;--B:#e0c36a;--C:#7d8790;--no:#d9786b;--mb:#b59be0;--fn:'Heebo',system-ui,-apple-system,sans-serif;color-scheme:dark}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){--bg:#f3f6f8;--sf:#ffffff;--sf2:#eaf0f3;--ln:#d3dde3;--fg:#15202a;--mu:#5a6b78;--ac:#1f7f99;--A:#2e8b47;--B:#9a7a12;--C:#7a848c;--no:#b5463a;--mb:#6f4fb0;color-scheme:light}}
+:root[data-theme="light"]{--bg:#f3f6f8;--sf:#ffffff;--sf2:#eaf0f3;--ln:#d3dde3;--fg:#15202a;--mu:#5a6b78;--ac:#1f7f99;--A:#2e8b47;--B:#9a7a12;--C:#7a848c;--no:#b5463a;--mb:#6f4fb0;color-scheme:light}
+html{direction:rtl}
+body{background:var(--bg);color:var(--fg);font-family:var(--fn);font-size:15px;line-height:1.5;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px 40px;overflow-x:hidden}
+.wrap{max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+body.web .wrap{max-width:1280px}
+h1{font-size:19px;font-weight:800;margin:0;text-wrap:balance}
+.sub{color:var(--mu);font-size:13px;margin:0}
+header{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end}
+header>div{min-width:0;flex:1}
+.tabs{display:flex;gap:4px;background:var(--sf2);border-radius:10px;padding:3px}
+.tabs a{color:var(--mu);text-decoration:none;font-size:13px;font-weight:700;padding:5px 12px;border-radius:8px}
+.tabs a[aria-current="page"]{background:var(--sf);color:var(--fg)}
+.row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.chip{border:1px solid var(--ln);background:var(--sf);color:var(--fg);border-radius:999px;padding:6px 12px;font:inherit;font-size:13px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ac);border-color:var(--ac);color:var(--bg);font-weight:700}
+.chip:focus-visible,.act:focus-visible,.lnk:focus-visible,.ib:focus-visible,th button:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.sync{font-size:12px;color:var(--mu);margin-inline-start:auto}
+.kpi{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--mu);font-variant-numeric:tabular-nums}
+.kpi b{color:var(--fg);font-size:15px}
+.prog{display:flex;flex-direction:column;gap:4px}
+.pbar{height:6px;background:var(--sf2);border-radius:99px;overflow:hidden;display:flex}
+.pbar i{display:block;height:100%}
+.deck{position:relative;height:min(620px,calc(100dvh - 210px));min-height:480px;touch-action:none;overscroll-behavior:contain}
+html,body{overflow-x:clip;max-width:100%}
+.card{position:absolute;inset:0;background:var(--sf);border:1px solid var(--ln);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0;user-select:none;will-change:transform;overflow:hidden}
+.card.under{transform:scale(.95) translateY(10px);opacity:.6;pointer-events:none}
+.card.anim{transition:transform .28s ease,opacity .28s ease}
+.stamp{position:absolute;top:18px;font-weight:800;font-size:22px;padding:2px 10px;border:3px solid;border-radius:8px;opacity:0;pointer-events:none}
+.stamp.y{left:16px;color:var(--A);border-color:var(--A);transform:rotate(-12deg)}
+.stamp.n{right:16px;color:var(--no);border-color:var(--no);transform:rotate(12deg)}
+.stamp.m{left:50%;transform:translateX(-50%);color:var(--mb);border-color:var(--mb)}
+.top{display:flex;gap:10px;align-items:center}
+.g{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-weight:800;flex:none;color:var(--bg)}
+.g.A{background:var(--A)}.g.B{background:var(--B)}.g.C{background:var(--C)}
+.nm{font-size:18px;font-weight:800;overflow-wrap:anywhere}
+.avw{position:relative;flex:none;width:64px;height:64px}
+.av{width:64px;height:64px;border-radius:50%;object-fit:cover;display:grid;place-items:center;background:var(--sf2);color:var(--mu);font-weight:800;font-size:20px;border:1px solid var(--ln)}
+.avw .g{position:absolute;bottom:-4px;left:-4px;width:24px;height:24px;font-size:12px;border:2px solid var(--sf)}
+.cur{color:var(--mu);font-size:14px;overflow-wrap:anywhere}
+dl{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;margin:0;font-size:14px}
+dt{color:var(--mu);font-size:12px;padding-top:2px;white-space:nowrap}
+dd{margin:0;min-width:0;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.why{background:var(--sf2);border-radius:10px;padding:8px 12px;font-size:13.5px;overflow-wrap:anywhere;flex:none}
+.why .wc{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;line-clamp:3;overflow:hidden}
+.tl{display:flex;flex-direction:column;gap:3px;font-size:13px;min-width:0;direction:ltr;text-align:left}
+.tl div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tl .dt{color:var(--mu);font-variant-numeric:tabular-nums;display:inline-block;min-width:84px;unicode-bidi:isolate}
+.tl .co{color:var(--mu)}
+.hs{font-size:12.5px;color:var(--mu);border-inline-start:3px solid var(--ac);padding:2px 10px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden;flex:none}
+.cbot{margin-top:auto;display:flex;gap:8px;align-items:center;justify-content:space-between;flex:none}
+.mbtn{border:1px solid var(--ln);background:var(--sf2);color:var(--fg);border-radius:9px;padding:7px 12px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+#sheet{position:fixed;inset:0;z-index:30;display:none}
+#sheet.on{display:block}
+#sheet .bd{position:absolute;inset:0;background:rgba(0,0,0,.5)}
+#sheet .pn{position:absolute;inset-inline:0;bottom:0;max-height:88dvh;overflow:auto;overscroll-behavior:contain;background:var(--sf);border-radius:16px 16px 0 0;padding:16px max(16px,env(safe-area-inset-left,0px)) calc(20px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:12px;max-width:640px;margin:0 auto}
+#sheet h3{margin:0;font-size:13px;color:var(--mu);font-weight:700}
+#sheet .tl div{white-space:normal}
+#sheet .x{position:sticky;top:0;align-self:flex-start;border:1px solid var(--ln);background:var(--sf2);color:var(--fg);border-radius:9px;padding:4px 12px;font:inherit;cursor:pointer}
+.ninf{all:unset;cursor:pointer;color:var(--ac);font-size:13px;margin-inline-start:6px}
+.xs{font-size:12px;font-weight:700;color:var(--ac)}
+.lnk{margin-top:auto;align-self:flex-start;color:var(--ac);font-weight:700;text-decoration:none;font-size:14px;padding:6px 0}
+.acts{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 48px;gap:6px}
+.act{border:1px solid var(--ln);background:var(--sf);color:var(--fg);border-radius:12px;padding:12px 4px;font:inherit;font-size:15px;font-weight:700;cursor:pointer}
+.act.y{color:var(--A);border-color:var(--A)}.act.n{color:var(--no);border-color:var(--no)}.act.m{color:var(--mb);border-color:var(--mb)}.act.c{color:var(--ac);border-color:var(--ac)}
+.act:disabled{opacity:.4;cursor:default}
+.hint{font-size:12px;color:var(--mu);text-align:center;margin:0}
+.done{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:var(--mu);border:1px dashed var(--ln);border-radius:16px;padding:20px}
+details{background:var(--sf);border:1px solid var(--ln);border-radius:12px;padding:10px 12px}
+summary{cursor:pointer;font-weight:700;font-size:14px}
+.list{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.li{display:flex;align-items:center;gap:8px;font-size:14px;min-width:0}
+.li a{color:var(--fg);text-decoration:none;min-width:0;overflow-wrap:anywhere}
+.li .t{color:var(--mu);font-size:12px;margin-inline-start:auto;white-space:nowrap}
+.li button{border:1px solid var(--ln);background:var(--sf2);color:var(--mu);border-radius:7px;font:inherit;font-size:12px;padding:2px 8px;cursor:pointer}
+.dot{width:10px;height:10px;border-radius:50%;flex:none}
+.bulk{border:1px solid var(--ln);background:var(--sf2);color:var(--fg);border-radius:9px;padding:9px;font:inherit;font-size:14px;cursor:pointer;width:100%;margin-top:8px}
+.tz{background:var(--sf2);border-radius:10px;padding:10px 12px;font-size:14px;margin-top:8px;overflow-wrap:anywhere}
+.notes{font-size:13px}.notes ul{margin:6px 0 0;padding-inline-start:18px;display:flex;flex-direction:column;gap:3px}
+/* web view */
+.tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.tools input{background:var(--sf);border:1px solid var(--ln);color:var(--fg);border-radius:9px;padding:7px 10px;font:inherit;font-size:14px;min-width:0;flex:1 1 200px;max-width:320px}
+.tw{overflow-x:auto;border:1px solid var(--ln);border-radius:12px;background:var(--sf)}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:900px}
+th{position:sticky;top:0;background:var(--sf2);text-align:right;font-size:12px;color:var(--mu);font-weight:700;white-space:nowrap}
+th button{all:unset;cursor:pointer;display:block;padding:8px 10px}
+th button[data-dir]::after{content:attr(data-dir);margin-inline-start:4px;color:var(--ac)}
+td{padding:8px 10px;border-top:1px solid var(--ln);vertical-align:top}
+td.n{font-variant-numeric:tabular-nums;white-space:nowrap}
+td a{color:var(--fg);font-weight:700;text-decoration:none}
+td a:hover{color:var(--ac)}
+td .w{color:var(--mu);font-size:13px;min-width:260px;max-width:420px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden;cursor:pointer}
+td .t2{max-width:220px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden}
+td .w.open{display:block;-webkit-line-clamp:unset;line-clamp:none}
+td .w:not(.open)::after{content:''}
+@media (max-width:700px){td{padding:6px 8px}td .w,td .t2{-webkit-line-clamp:1;line-clamp:1}td a{white-space:nowrap}td .xs{display:block;max-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}td .w{min-width:200px}td .t2{max-width:160px}table{font-size:13px}}
+.gp{display:inline-block;min-width:22px;text-align:center;border-radius:6px;font-weight:800;font-size:12px;color:var(--bg);padding:1px 6px}
+.gp.A{background:var(--A)}.gp.B{background:var(--B)}.gp.C{background:var(--C)}
+.ibs{display:flex;gap:4px;white-space:nowrap}
+.ib{border:1px solid var(--ln);background:var(--sf2);color:var(--mu);border-radius:7px;font:inherit;font-size:13px;padding:2px 8px;cursor:pointer}
+.ib[aria-pressed="true"].fit{background:var(--A);border-color:var(--A);color:var(--bg)}
+.ib[aria-pressed="true"].maybe{background:var(--mb);border-color:var(--mb);color:var(--bg)}
+.ib[aria-pressed="true"].no{background:var(--no);border-color:var(--no);color:var(--bg)}
+.ib[aria-pressed="true"].connect{background:var(--ac);border-color:var(--ac);color:var(--bg)}
+tr.dim td{opacity:.55}
+.empty{padding:24px;text-align:center;color:var(--mu)}
+#toast{position:fixed;bottom:calc(16px + env(safe-area-inset-bottom,0px));left:max(16px,env(safe-area-inset-left,0px));background:var(--fg);color:var(--bg);padding:8px 14px;border-radius:8px;font-size:13px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:20}
+#toast.on{opacity:1}
+@media (prefers-reduced-motion: reduce){.card.anim,#toast{transition:none}}
+</style>
+<div id="sheet" role="dialog" aria-modal="true"><div class="bd" onclick="closeSheet()"></div><div class="pn" id="shp"></div></div>
+<div class="wrap">
+  <header>
+    <div><h1 id="h1"></h1><p class="sub" id="sub"></p></div>
+    <nav class="tabs" aria-label="תצוגה"><a href="#swipe" id="tsw">📱 טינדר</a><a href="#web" id="twb">🖥 מכרה</a></nav>
+  </header>
+  <div class="kpi" id="kpi"></div>
+  <div class="row" id="fg">
+    <button class="chip" data-g="A" aria-pressed="true">A</button>
+    <button class="chip" data-g="B" aria-pressed="false">B</button>
+    <button class="chip" data-g="C" aria-pressed="false">C</button>
+    <button class="chip" data-g="all" aria-pressed="false">הכל</button>
+    <span class="sync" id="sync">מתחבר…</span>
+  </div>
+
+  <section id="vsw" class="wrap" style="padding:0;max-width:none">
+    <div class="prog"><div class="pbar" id="pbar"></div></div>
+    <div class="deck" id="deck"></div>
+    <div class="acts">
+      <button class="act n" id="bn">✗ לא</button>
+      <button class="act m" id="bm">? אולי</button>
+      <button class="act y" id="by">✓ מתאים</button>
+      <button class="act c" id="bc">🤝 חיבור</button>
+      <button class="act" id="bu" aria-label="בטל סימון אחרון">↶</button>
+    </div>
+    <p class="hint">ימינה = מתאים · שמאלה = לא · למעלה = אולי · לגלילה: לגעת מחוץ לכרטיס · 🤝 = בקשת חיבור עם טיזר · מי שכבר פנינו אליו לא מופיע בתור</p>
+  </section>
+
+  <section id="vwb" hidden style="display:flex;flex-direction:column;gap:10px">
+    <div class="tools">
+      <input id="q" type="search" placeholder="חיפוש שם / חברה / הערה" aria-label="חיפוש">
+      <div class="row" id="fs">
+        <button class="chip" data-s="all" aria-pressed="true">כל הסטטוסים</button>
+        <button class="chip" data-s="open" aria-pressed="false">לא סומן</button>
+        <button class="chip" data-s="fit" aria-pressed="false">✓</button>
+        <button class="chip" data-s="maybe" aria-pressed="false">?</button>
+        <button class="chip" data-s="connect" aria-pressed="false">🤝</button>
+        <button class="chip" data-s="no" aria-pressed="false">✗</button>
+        <button class="chip" data-s="x" aria-pressed="false">פנינו</button>
+      </div>
+    </div>
+    <div class="tw"><table><thead><tr id="thr"></tr></thead><tbody id="tb"></tbody></table></div>
+  </section>
+
+  <details id="dcn"><summary id="scn"></summary><div class="tz" id="tz"></div><div class="list" id="lcn"></div><button class="bulk" id="copycn">העתק רשימה לבקשות חיבור</button></details>
+  <details id="dfit"><summary id="sfit"></summary><div class="list" id="lfit"></div><button class="bulk" id="copyfit">העתק רשימת מתאימים</button></details>
+  <details id="dmb"><summary id="smb"></summary><div class="list" id="lmb"></div></details>
+  <details id="dno"><summary id="sno"></summary><div class="list" id="lno"></div></details>
+  <details class="notes" id="dnotes"><summary>הערות וחורים בדאטה</summary><ul id="notes"></ul></details>
+</div>
+<div id="toast" role="status"></div>
+<script>
+const D=[{"k": "ariel-chinn", "n": "Ariel Chinn", "g": "A", "t": "Software Engineer @ Vero Security", "c": "Vero Security", "y": null, "mo": null, "e": "יחידה: כן — מאומת · צוער 2012", "w": "מתאים — 8200 + מפתח, כ-6 שנות תעשייה · צוער 7.2012-8.2015 · צה\"ל R&D 2015-17 · 8200: Software Engineer 2017-18, Software Engineer Team Lead 2018-20 · Google SWE 12.2020-3.2024 · Salto SWE → Team Lead 2024-25 · DriveNets Team Lead 11.2025-5.2026 · Vero Security Software Engineer מ-5.2026 [בדיקה מלאה] (2026-11-09)", "u": "https://www.linkedin.com/in/ariel-chinn", "x": ""}, {"k": "daniel-fridkin", "n": "Daniel Fridkin", "g": "A", "t": "Gen1 @ Eon.io | Talpiot Alumni", "c": "Eon.io", "y": null, "mo": null, "e": "יחידה: כן — מאומת · צוער 2014", "w": "[הצעת אדם] מתאים — אמ\"ן + מפתח · [Recruiter 10.11, טאב של אדם] צוער 7.2014-7.2017 · Israeli Military Intelligence 2017-2023: Algorithm Eng → SW TL → Eng Lead → DS TL · Eon.io Senior SWE מ-6.2024 (2026-11-10)", "u": "https://www.linkedin.com/in/daniel-fridkin", "x": ""}, {"k": "itay-gera", "n": "Itay Gera", "g": "A", "t": "Senior Software Engineer (לשעבר Cyber Security R&D Team Leader)", "c": "Stealth Startup", "y": null, "mo": null, "e": "יחידה: כן — מאומת · צוער 2014", "w": "[הצעת אדם] מתאים · צוער 2014-2017 · מצו\"ב · 8200 2018-2020 · מצו\"ב עד 8.2024 (ראש קבוצת פיתוח) · Software Engineer בסטארטאפ סטלת׳ מ-11.2024 (2026-11-09)", "u": "https://www.linkedin.com/in/itay-gera", "x": ""}, {"k": "johnathan-regev-210b6a411", "n": "Johnathan Regev", "g": "A", "t": "Software Engineer | Talpiot Alum", "c": "אמ\"ן (בשירות)", "y": null, "mo": null, "e": "יחידה: כן — מאומת · צוער 2017", "w": "[הצעת אדם] מתאים — בשירות · צוער 2017-2020 · משרד רה\"מ 2020-22 · אמ\"ן Senior Software Engineer מ-6.2023 (2026-11-09)", "u": "https://www.linkedin.com/in/johnathan-regev-210b6a411", "x": ""}, {"k": "maxim-chernitsky-517928347", "n": "Maxim Chernitsky", "g": "A", "t": "Talpiot | 8200", "c": "8200 (בשירות)", "y": null, "mo": null, "e": "יחידה: כן — מאומת · צוער 2016", "w": "[הצעת אדם] מתאים — ניהולי, בשירות · צוער 2016-2019 · 8200 מ-2019: מפתח → TL → ראש קבוצת פיתוח מ-8.2024 (2026-11-09)", "u": "https://www.linkedin.com/in/maxim-chernitsky-517928347", "x": ""}, {"k": "roey-rozi-9a5091ba", "n": "Roey Rozi", "g": "A", "t": "", "c": "Cyera Identity (Oasis)", "y": null, "mo": null, "e": "יחידה: כן — מאומת", "w": "[הצעת אדם] מתאים — אמ\"ן + low-level, ניהולי בכיר", "u": "https://www.linkedin.com/in/roey-rozi-9a5091ba", "x": ""}, {"k": "roni-varshavsky-3aa66a201", "n": "Roni Varshavsky", "g": "A", "t": "Researcher, Reverse Engineer & Developer", "c": "מצו\"ב (בשירות)", "y": null, "mo": null, "e": "יחידה: כן — מאומת · צוער 2017", "w": "[הצעת אדם] מתאים — בשירות · צוער 2017-2020 · 8200 2020-2023 · מצו\"ב מ-9.2023 (חוקר, RE, פיתוח) (2026-11-09)", "u": "https://www.linkedin.com/in/roni-varshavsky-3aa66a201", "x": ""}, {"k": "shimri-kehat-b53142319", "n": "Shimri Kehat", "g": "A", "t": "R&D Team Lead (ex-8200), Talpiot Class Commander", "c": "IDF (סיים 11.2025?)", "y": null, "mo": null, "e": "יחידה: כן — מאומת · צוער 2016", "w": "מתאים — 8200 R&D + ראש צוות; אין תפקיד רשום מאז 11.2025 (אולי פנוי) · [Recruiter cadet+software 10.11, בדיקה מלאה] Cadet 7.2016-9.2019 → R&D, 8200 10.2019-2.2023 → R&D Team Lead, 8200 2.2023-8.2024 → Talpiot Class Commander 8.2024-11.2025. אין תפקיד אחרי 11.2025 (2026-11-10)", "u": "https://www.linkedin.com/in/shimri-kehat-b53142319", "x": ""}, {"k": "tomer-goren", "n": "Tomer G.", "g": "A", "t": "8200 | Talpiot", "c": "8200 (בשירות)", "y": null, "mo": null, "e": "יחידה: כן — מאומת · צוער 2017", "w": "[הצעת אדם] מתאים — בשירות, ניהולי · צוער 2017-2020 · 8200 מ-2020: מפתח → TL → ראש מחלקת פיתוח מ-2024 (2026-11-09)", "u": "https://www.linkedin.com/in/tomer-goren", "x": ""}, {"k": "yotam-sali-3a99a4397", "n": "Yotam Sali", "g": "A", "t": "Software Enginner @ Stealth | Talpiot & 8200 Alumnus", "c": "Beacon Security", "y": null, "mo": null, "e": "יחידה: כן — מאומת · צוער 2015", "w": "[הצעת אדם] מתאים — 8200 + מפתח, דרגה 1 · צוער 7.2015-9.2018 (מחזור 37) · 8200: Software Engineer 2018-21 → R&D Team Lead 2021-22 · מפקד מחזור בתלפיות 2022-23 · 8200 R&D Group Manager 2023-8.2025 (פרס ביטחון ישראל) · Beacon Security Senior Software Engineer מ-11.2025 · מחובר דרגה 1 [בדיקה מלאה] (2026-11-09)", "u": "https://www.linkedin.com/in/yotam-sali-3a99a4397", "x": "", "h": {"n": 1, "in": 0, "first": "2026-06-14", "last": "2026-06-14", "snip": "", "circle": "archive"}}, {"k": "anat-zamir", "n": "Anat Zamir", "g": "B", "t": "Software Engineer at monday.com", "c": "monday.com", "y": null, "mo": null, "e": "יחידה: כן — מאומת · צוער 2021", "w": "[הצעת אדם] מתאים עם הסתייגות — 8200 + מפתחת צעירה, אבל יצאה מתלפיות אחרי 9 חודשים · צוערת 8.2021-4.2022 בלבד (9 חודשים) · 8200 Software Engineer 4.2022-6.2024 · monday.com Software Engineer מ-8.2024 [בדיקה מלאה] (2026-11-09)", "u": "https://www.linkedin.com/in/anat-zamir", "x": ""}, {"k": "ben-sirota-5b0414366", "n": "Ben Sirota", "g": "B", "t": "Founding Engineer", "c": "Impala AI", "y": null, "mo": null, "e": "יחידה: כן — מאומת · צוער 2021", "w": "מתאים עם הסתייגות — אמ\"ן מפתח, כנראה יצא מתלפיות מוקדם · [Recruiter 10.11, בדיקה מלאה] Education HUJI 2021-2022 \"Talpiot Program (IDF)\" → R&D SWE, Israeli Military Intelligence 7.2022-8.2025 → Founding Engineer Impala AI 8.2025-היום. שירות קצר = כנראה יצא מתלפיות אחרי שנה (2026-11-10)", "u": "https://www.linkedin.com/in/ben-sirota-5b0414366", "x": ""}, {"k": "dan-feigin", "n": "Dan F.", "g": "B", "t": "Senior Software Engineer @ NVIDIA | Talpiot Alumnus", "c": "NVIDIA", "y": null, "mo": null, "e": "יחידה: לא ידוע · צוער 2014", "w": "[הצעת אדם] גבולי — מפתח מובהק, אבל היחידה לא מצוינת · צוער 7.2014-7.2017 · צה\"ל 2017-10.2025 (יחידה לא מצוינת): Software Engineer → Senior SWE → Software Engineering Team Lead · NVIDIA Senior Software Engineer מ-10.2025 [בדיקה מלאה] (2026-11-09)", "u": "https://www.linkedin.com/in/dan-feigin", "x": ""}, {"k": "dan-shimshi", "n": "Dan Shimshi", "g": "B", "t": "System Engineer", "c": "Matrix (part-time)", "y": null, "mo": null, "e": "יחידה: כן — מאומת · צוער 2021", "w": "גבולי — System Engineer ב-81 (לא מפתח), פנוי מ-9.2025 · [Recruiter cadet+software 10.11, בדיקה מלאה] Cadet 7.2021-9.2022 (יצא מוקדם) → System Engineer, 81 9.2022-9.2025 → Apex/Matrix part-time (2026-11-10)", "u": "https://www.linkedin.com/in/dan-shimshi", "x": ""}, {"k": "dvir-amar", "n": "Dvir Amar", "g": "B", "t": "Software Engineer", "c": "NVIDIA", "y": null, "mo": null, "e": "יחידה: כן — מאומת · צוער 2017", "w": "מתאים עם הסתייגות — 8200 + מפתח, אבל יצא מתלפיות אחרי שנה וחצי · צוער 7.2017-12.2018 בלבד (שנה וחצי, לא סיים) · 8200 Software Engineer 2.2019-10.2022 · פער 2022-2025 · NVIDIA Firmware Engineer מ-8.2025 [בדיקה מלאה] (2026-11-09)", "u": "https://www.linkedin.com/in/dvir-amar", "x": ""}, {"k": "eran-milo", "n": "Eran Milo", "g": "B", "t": "Security Researcher | Talpiot | 8200 | Matzov", "c": "8200 (בשירות)", "y": null, "mo": null, "e": "יחידה: כן — מאומת · צוער 2017", "w": "גבולי — חוקר low-level, היה R&D TL · צוער 2017-2020 · מצו\"ב 2020-24 · J6 2024-25 · 8200 מ-2025 (Senior Security Researcher) (2026-11-09)", "u": "https://www.linkedin.com/in/eran-milo", "x": ""}, {"k": "erel-nahum", "n": "Erel Nahum", "g": "B", "t": "R&D Team Lead", "c": "Leading cybersecurity organization (בשירות)", "y": null, "mo": null, "e": "יחידה: לא ידוע · צוער 2021", "w": "גבולי — מפתח low-level חזק, יחידה לא נקובה, בשירות · [Recruiter 10.11, בדיקה מלאה] Cadet · Talpiot Program 7.2021-8.2024 (מחזור 43) → R&D SWE \"Leading cybersecurity organization\" 10.2024 (C++ low-level Windows) → R&D Team Lead 4.2026. הארגון לא נקוב (אולי 8200, אולי שב\"כ) (2026-11-10)", "u": "https://www.linkedin.com/in/erel-nahum", "x": ""}, {"k": "eyal-horowicz", "n": "Eyal Horowicz", "g": "B", "t": "building", "c": "Stealth AI Startup", "y": null, "mo": null, "e": "יחידה: לא ידוע · צוער 2014", "w": "[הצעת אדם] גבולי — מפתח, אבל היחידה לא מצוינת · צוער 2014-2017 · צה\"ל 2017-6.2024 (יחידה לא מצוינת): Software Engineer 2017-21 → Data Scientist → DS Team Leader → Software Engineering Team Lead 2023-24 · Claroty Senior SWE מ-6.2024 · Software Engineer בסטארטאפ AI בסטלת׳ מ-6.2026 [בדיקה מלאה] (2026-11-09)", "u": "https://www.linkedin.com/in/eyal-horowicz", "x": ""}, {"k": "gilad-lifshitz-101bb6335", "n": "Gilad Lifshitz", "g": "B", "t": "MSc computer science student at Ben-Gurion University", "c": "— (סטודנט, השתחרר 3.2025)", "y": null, "mo": null, "e": "יחידה: לא ידוע · צוער 2019", "w": "גבולי — מפתח צעיר מאוד, אבל היחידה לא מצוינת (אוטונומיה, כנראה לא מודיעין) · צוער 2019-2021 · צה\"ל (יחידה לא מצוינת): Software Developer 2021-23, Autonomy R&D Team Lead 2023-3.2025 · היום סטודנט לתואר שני (CS, BGU) [בדיקה מלאה] (2026-11-09)", "u": "https://www.linkedin.com/in/gilad-lifshitz-101bb6335", "x": ""}, {"k": "harel-gelfand-27b389294", "n": "Harel Gelfand", "g": "B", "t": "Cadet", "c": "Talpiot Program", "y": null, "mo": null, "e": "יחידה: לא ידוע · צוער 2014", "w": "[הצעת אדם] גבולי — אין מידע על השירות · [Recruiter cadet+software 10.11, בדיקה מלאה] Cadet 2014-2017, M.Eng EE TAU 2018-2025, אין תפקידים רשומים (2026-11-10)", "u": "https://www.linkedin.com/in/harel-gelfand-27b389294", "x": ""}, {"k": "hillel-twersky", "n": "Hillel Twersky", "g": "B", "t": "AI Engineer | Talpiot Alumnus", "c": "Carefam", "y": null, "mo": null, "e": "יחידה: כן — מאומת · צוער 2016", "w": "גבולי — AI Engineer (Python, multi-agent), רקע חקר ביצועים/אלגו · צוער 2016-2019 · מפא\"ת 2019-22 (חקר ביצועים, TL) · 8200 Algorithm Engineer 2023-9.2025 · Carefam Senior AI Engineer מ-10.2025 (2026-11-09)", "u": "https://www.linkedin.com/in/hillel-twersky", "x": ""}, {"k": "idoweiss", "n": "Ido Weiss", "g": "B", "t": "Software Engineer @ Google Research", "c": "Google", "y": null, "mo": null, "e": "יחידה: כן — מאומת · צוער 2012", "w": "גבולי — 8200, התחיל כמפתח, היום Research Engineer · צוער 7.2012-7.2015 · קצין טכנולוגיה ביחידה מיוחדת 2015-16 · 8200 2016-21: Android Developer → CV Software Engineer → CV Research Engineer · Nucleai Senior Algo · AI21 Algorithm Developer · Google Research Engineer מ-12.2025 [בדיקה מלאה] (2026-11-09)", "u": "https://www.linkedin.com/in/idoweiss", "x": ""}, {"k": "inon-gdolim-4818b4308", "n": "Inon Gdolim", "g": "B", "t": "Talpiot | Unit 81 | M.Sc. in Computer Science", "c": "ChikChak (חלקי)", "y": null, "mo": null, "e": "יחידה: כן — מאומת · צוער 2016", "w": "גבולי — היה Embedded SW 2019-21, אח\"כ מוצר וחוקר AI · צוער 7.2016-11.2019 · אמ\"ן 11.2019-9.2025: Embedded Software Engineer (2019-21) → Product & Tech Initiatives → ראש קבוצת חדשנות מוצר וטכנולוגיה → AI Researcher CV (2024-25) · מייסד ChikChak חלקי מ-3.2026 · תואר שני BGU [בדיקה מלאה] (2026-11-09)", "u": "https://www.linkedin.com/in/inon-gdolim-4818b4308", "x": ""}, {"k": "itai-narkis-9847a2290", "n": "Itai Narkis", "g": "B", "t": "Cyber Security Team Lead", "c": "IDF (בשירות)", "y": null, "mo": null, "e": "יחידה: לא ידוע · צוער 2019", "w": "גבולי — סייבר בשירות, יחידה לא נקובה, לא ברור אם פיתוח · [Recruiter cadet+software 10.11, בדיקה מלאה] Cadet 8.2019-8.2022 → IDF Cyber Security Specialist 8.2022-3.2025 → TL 3.2025-היום. יחידה לא נקובה (2026-11-10)", "u": "https://www.linkedin.com/in/itai-narkis-9847a2290", "x": ""}, {"k": "itamar-pitz-fruchter", "n": "Itamar Fruchter", "g": "B", "t": "Masters Student", "c": "Weizmann (MSc)", "y": null, "mo": null, "e": "יחידה: כן — מאומת · צוער 2015", "w": "מתאים עם הסתייגות — אמ\"ן R&D/סייבר, אחר כך J6; סטודנט מ-12.2025 · [Recruiter cadet+software 10.11, בדיקה מלאה] Cadet → R&D Engineer, Israeli Military Intelligence 11.2018-12.2019 → Cyber Security Engineer, AMAN 2020-2021 → Talpiot Commander 2021-2022 → J6 R&D TL 2022-2024 → MSc Weizmann 12.2025 (2026-11-10)", "u": "https://www.linkedin.com/in/itamar-pitz-fruchter", "x": ""}, {"k": "lior-glam-130447239", "n": "Lior Glam", "g": "B", "t": "R&D Group Tech Lead, Identity @ Cyera", "c": "Cyera (Oasis)", "y": null, "mo": null, "e": "יחידה: כן — מאומת · צוער 2017", "w": "מתאים עם הסתייגות — ב-Cyera מ-9.2026 (רכישת Oasis), צוער שנה אחת בלבד · Cadet Talpiot 2017-2018 (שנה אחת) + Israeli Military Intelligence 4 שנים (ר\"צ פיתוח מחקר). עבר ל-Cyera ברכישה 9.2026 (2026-11-09)", "u": "https://www.linkedin.com/in/lior-glam-130447239", "x": "", "h": {"n": 17, "in": 5, "first": "2024-12-11", "last": "2026-06-29", "snip": "לא רלוונטי כרגע, תודה!!", "snip_d": "2026-06-29", "circle": "promote"}}, {"k": "noa-koren", "n": "Noa Koren", "g": "B", "t": "Software Engineer", "c": "Onyx Security", "y": null, "mo": null, "e": "יחידה: לא ידוע · צוער 2012", "w": "[הצעת אדם] גבולי — מפתחת חזקה, אבל היחידה בצבא לא מצוינת (לא ידוע אם מודיעין) · צוער 2012-2015 · צה\"ל 2015-2021 (יחידה לא מצוינת): Security Researcher & Embedded Developer 2015-18, מפקדת מחזור בתלפיות 2018-19, ר\"צ מחקר אבטחה 2019-21 · Wing Security SWE → SW Team Leader 2022-10.2024 · Onyx Security Software Engineer מ-12.2024 [בדיקה מלאה] (2026-11-09)", "u": "https://www.linkedin.com/in/noa-koren", "x": ""}, {"k": "noam-fluss-422076180", "n": "Noam Fluss", "g": "B", "t": "Cadet", "c": "IDF (בשירות)", "y": null, "mo": null, "e": "יחידה: לא ידוע · צוער 2020", "w": "גבולי — אין מידע אחרי הצוערות · [Recruiter cadet+software 10.11, בדיקה מלאה] Cadet 8.2020-8.2023, אין תפקיד אחרי. MSc CS HUJI (2026-11-10)", "u": "https://www.linkedin.com/in/noam-fluss-422076180", "x": ""}, {"k": "noam-g-752405323", "n": "Noam G.", "g": "B", "t": "Software Engineer at Microsoft", "c": "Microsoft", "y": null, "mo": null, "e": "יחידה: לא ידוע · צוער 2015", "w": "[הצעת אדם] גבולי — מפתח, אבל היחידה לא מצוינת · צוער 2015-2018 · צה\"ל 2018-2024 (יחידה לא מצוינת): קצין, Algorithmic Researcher 2020-22, Software & System Engineer 2022-24 · Microsoft Software Engineer מ-12.2024 [בדיקה מלאה] (2026-11-09)", "u": "https://www.linkedin.com/in/noam-g-752405323", "x": ""}, {"k": "omer-prives", "n": "Omer Prives", "g": "B", "t": "", "c": "IDF (בשירות)", "y": null, "mo": null, "e": "יחידה: לא ידוע", "w": "[הצעת אדם] גבולי — מפתח → ראש קבוצה בשירות, יחידה לא נקובה", "u": "https://www.linkedin.com/in/omer-prives", "x": ""}, {"k": "omri-matania", "n": "Omri Matania", "g": "B", "t": "Software Engineering Team Lead at Aidoc", "c": "Aidoc", "y": null, "mo": null, "e": "יחידה: לא ידוע · צוער 2013", "w": "[הצעת אדם] גבולי — מפתח, היחידה לא מצוינת · צוער 7.2013-7.2016 (מחזור ל\"ה) · צה\"ל 2016-7.2022 (יחידה לא מצוינת): R&D Engineer → R&D Team Leader → R&D Section Leader · דוקטורנט BGU 2022-24 · Aidoc Software Engineer 10.2024, Software Engineering Team Lead מ-10.2026 [בדיקה מלאה] (2026-11-09)", "u": "https://www.linkedin.com/in/omri-matania", "x": ""}, {"k": "oren-shauly-a39899222", "n": "Oren Shauly", "g": "B", "t": "", "c": "Stealth (ייתכן NewCore)", "y": null, "mo": null, "e": "יחידה: כן — מאומת", "w": "[הצעת אדם] לבדוק — ייתכן שעובד ב-NewCore (לקוח); ותיק (צוער 2011), ניהולי", "u": "https://www.linkedin.com/in/oren-shauly-a39899222", "x": ""}, {"k": "roeehendel", "n": "Roee H.", "g": "B", "t": "ML Research Engineer | Talpiot | ex-AI21 | M.Sc. CS", "c": "— (פנוי מ-6.2026)", "y": null, "mo": null, "e": "יחידה: כן — מאומת · צוער 2016", "w": "גבולי — Algorithm Developer, כתב קוד production ב-AI21 · צוער 7.2016-7.2019 · 8200: Deep Learning Researcher 2019-21, Data Scientist 2021-22 · חוקר בת\"א 2022-23 (EMNLP) · AI21 Algorithm Developer 10.2023-6.2026 · אין תפקיד נוכחי [בדיקה מלאה] (2026-11-09)", "u": "https://www.linkedin.com/in/roeehendel", "x": ""}, {"k": "ron-karat-6705b1329", "n": "Ron Karat", "g": "B", "t": "R&D Team Lead", "c": "Cyber Security (בשירות?)", "y": null, "mo": null, "e": "יחידה: לא ידוע · צוער 2017", "w": "[הצעת אדם] גבולי — מפתח צעיר, יחידה לא נקובה · [Recruiter 10.11, טאב של אדם] צוער 2017-2020 · \"Cyber Security\" 2020-היום (יחידה לא נקובה, כנראה בשירות): Security Researcher → Senior SWE → R&D TL מ-12.2023 (2026-11-10)", "u": "https://www.linkedin.com/in/ron-karat-6705b1329", "x": ""}, {"k": "roy-zohar-1a28bba7", "n": "Roy Zohar", "g": "B", "t": "", "c": "IDF (בשירות)", "y": null, "mo": null, "e": "יחידה: לא ידוע", "w": "[הצעת אדם] גבולי — ראש קבוצה בשירות, יחידה לא נקובה (רמז לחיל האוויר)", "u": "https://www.linkedin.com/in/roy-zohar-1a28bba7", "x": ""}, {"k": "shahar-silberstein-5b8a02385", "n": "Shahar Silberstein", "g": "B", "t": "PhD Student", "c": "Weizmann (PhD)", "y": null, "mo": null, "e": "יחידה: לא ידוע · צוער 2015", "w": "גבולי — low-level SW, יחידה לא נקובה, עכשיו דוקטורט · [Recruiter cadet+software 10.11, בדיקה מלאה] Cadet 7.2015-11.2018 (מצטיין) → IDF Researcher 2018-2021 → Low-Level Software R&D 8.2021-7.2024 → PM & System Engineer 7.2024-1.2026 → PhD Weizmann. יחידה לא נקובה (2026-11-10)", "u": "https://www.linkedin.com/in/shahar-silberstein-5b8a02385", "x": ""}, {"k": "tomer-michael", "n": "Tomer Michael", "g": "B", "t": "Building @ Wenrix", "c": "Wenrix", "y": null, "mo": null, "e": "יחידה: לא ידוע · צוער 2015", "w": "גבולי — מפתח, אבל יצא מתלפיות אחרי שנה; בשירות היה אנליסט ב\"שירות המודיעין\" (לא אמ\"ן/8200) · Education: \"Talpiot Program\" באוניברסיטה העברית 10.2015-11.2016 בלבד (שנה) · Intelligence Analyst ב-\"Israeli Intelligence Service\" 11.2016-3.2018 · Lightricks SWE 2019-21 · תואר שני 2021-23 · Stealth SWE 2024 · Wenrix Software Engineer מ-1.2025 [בדיקה מלאה] (2026-11-09)", "u": "https://www.linkedin.com/in/tomer-michael", "x": ""}, {"k": "yael-blum-7134b2376", "n": "Yael Blum", "g": "B", "t": "Research And Development Engineer", "c": "IDF (בשירות)", "y": null, "mo": null, "e": "יחידה: לא ידוע · צוער 2020", "w": "[הצעת אדם] גבולי — מפתחת סייבר/embedded בשירות, יחידה מוסתרת · [Recruiter cadet+software 10.11, בדיקה מלאה] Cadet 8.2020-8.2023 → R&D Engineer \"N/A\" 9.2023-היום (תכנות R&D סייבר + embedded, IDA Pro). ארגון מוסתר (2026-11-10)", "u": "https://www.linkedin.com/in/yael-blum-7134b2376", "x": ""}, {"k": "yuval-koren-6662522a5", "n": "Yuval Koren", "g": "B", "t": "AI Researcher | Talpiot | 81", "c": "Dream", "y": null, "mo": null, "e": "יחידה: כן — מאומת · צוער 2015", "w": "גבולי — Embedded SW 2020-22, היום חוקר DL · צוער 2015-2018 · חוקר DL בצה\"ל 2018-20 · אמ\"ן 2020-24 (Embedded → TL → R&D Group Lead) · Dream, Deep Learning Researcher מ-4.2026 (2026-11-09)", "u": "https://www.linkedin.com/in/yuval-koren-6662522a5", "x": ""}, {"k": "yuval-peretz-070951353", "n": "Yuval Peretz", "g": "B", "t": "Software Engineer", "c": "Check Point", "y": null, "mo": null, "e": "יחידה: לא ידוע · צוער 2021", "w": "גבולי — מפתח צעיר מאוד, יצא מתלפיות אחרי שנה, יחידה לא מצוינת · צוער 7.2021-9.2022 בלבד · צה\"ל Software Engineer 10.2022-6.2024 (יחידה לא מצוינת) · Check Point Software Developer מ-8.2025 [בדיקה מלאה] (2026-11-09)", "u": "https://www.linkedin.com/in/yuval-peretz-070951353", "x": ""}, {"k": "ariel-prosak-502393312", "n": "ariel prosak", "g": "B", "t": "Cyber Security Team Lead", "c": "IDF (בשירות)", "y": null, "mo": null, "e": "יחידה: לא ידוע · צוער 2018", "w": "גבולי — סייבר בשירות, יחידה לא נקובה, לא ברור אם פיתוח · [Recruiter cadet+software 10.11, בדיקה מלאה] Cadet 7.2018-7.2021 → IDF Cyber Security Specialist 11.2021-4.2024 → TL 5.2024-היום. Python/Assembly. יחידה לא נקובה (2026-11-10)", "u": "https://www.linkedin.com/in/ariel-prosak-502393312", "x": ""}, {"k": "adi-asher-7a2953416", "n": "Adi Asher", "g": "C", "t": "", "c": "Talpiot Program", "y": null, "mo": null, "e": "יחידה: לא — מצו\"ב", "w": "[הצעת אדם] לא מתאים להגדרה — Head of Cyber Security R&D Group במצו\"ב, מפקד מחזור בתלפיות עד 8.2026", "u": "https://www.linkedin.com/in/adi-asher-7a2953416", "x": ""}, {"k": "alon-ben-eliezer", "n": "Alon Ben Eliezer", "g": "C", "t": "", "c": "Gain", "y": null, "mo": null, "e": "יחידה: כן — אמ\"ן", "w": "[הצעת אדם] לא נבדק — Cyber R&D Group Leader באמ\"ן עד 12.2024, עכשיו \"Building\" ב-Gain מ-3.2025. בכיר/מייסד?", "u": "https://www.linkedin.com/in/alon-ben-eliezer", "x": ""}, {"k": "edenrozen", "n": "Eden Rozen", "g": "C", "t": "", "c": "IDF - Matzov (עד 7.2025)", "y": null, "mo": null, "e": "יחידה: לא — מצו\"ב", "w": "[הצעת אדם] לא מתאים להגדרה — מצו\"ב (Cloud R&D Group Lead עד 7.2025), לא מודיעין", "u": "https://www.linkedin.com/in/edenrozen", "x": ""}, {"k": "inbal-beracha-a668ab182", "n": "Inbal Beracha", "g": "C", "t": "", "c": "Tenet Security", "y": null, "mo": null, "e": "יחידה: לא ידוע", "w": "[הצעת אדם] לא נבדק — Founding Engineer ב-Tenet Security מ-6.2025; לפני Data Scientist ב-CytoReason, MSc ויצמן. אין שירות בפרופיל", "u": "https://www.linkedin.com/in/inbal-beracha-a668ab182", "x": ""}, {"k": "itay-dumay-65a083211", "n": "Itay Dumay", "g": "C", "t": "", "c": "Undisclosed Cyber Org", "y": null, "mo": null, "e": "יחידה: לא ידוע", "w": "[הצעת אדם] לא נבדק — Software Developer ב-\"Undisclosed Cyber Organization\" מ-4.2023 (C++), Vayyar לפני", "u": "https://www.linkedin.com/in/itay-dumay-65a083211", "x": ""}, {"k": "michael-kellner-689258206", "n": "Michael Kellner", "g": "C", "t": "", "c": "Corma", "y": null, "mo": null, "e": "יחידה: לא ידוע (\"Government of Israel\" 6 שנים)", "w": "[הצעת אדם] לא נבדק — Member of Technical Staff ב-Corma מ-12.2025; Co-Founder & CTO SendBlocks 2022-2026", "u": "https://www.linkedin.com/in/michael-kellner-689258206", "x": ""}, {"k": "ofer-ben-shalom-a363b0109", "n": "Ofer Ben Shalom", "g": "C", "t": "", "c": "Palo Alto Networks", "y": null, "mo": null, "e": "יחידה: לא ידוע", "w": "[הצעת אדם] לא מתאים — ותיק (צוער 2008), יחידה לא נקובה, קידום טרי", "u": "https://www.linkedin.com/in/ofer-ben-shalom-a363b0109", "x": ""}, {"k": "omerdeu", "n": "Omer Deutsch", "g": "C", "t": "", "c": "Eon.io", "y": null, "mo": null, "e": "יחידה: לא — מצו\"ב", "w": "[הצעת אדם] לא מתאים — מצו\"ב, לא מודיעין (מפתח חזק)", "u": "https://www.linkedin.com/in/omerdeu", "x": ""}, {"k": "roi-garfunkel-844220231", "n": "Roi Garfunkel", "g": "C", "t": "Software Engineer | Talpiot Alumni", "c": "Google", "y": null, "mo": null, "e": "יחידה: לא ידוע · צוער 2013", "w": "לא כרגע — ב-Google רק 4 חודשים; היחידה לא מצוינת (מכ\"ם) · צוער 7.2013-11.2016 (מחזור ל\"ה) · צה\"ל 2016-22 (יחידה לא מצוינת): חוקר מערכות מכ\"ם, Embedded Developer 2021-22 · Classiq Quantum SWE 2022-25, Execution Team Lead מ-11.2025 · Google Software Engineer מ-8.2026 [בדיקה מלאה] (2026-11-09)", "u": "https://www.linkedin.com/in/roi-garfunkel-844220231", "x": ""}, {"k": "shachar-cohen-480b86205", "n": "Shachar Cohen", "g": "C", "t": "Software | Management | 8200 | 81 | Talpiot", "c": "Stealth (מייסד)", "y": null, "mo": null, "e": "יחידה: כן — מאומת · צוער 2014", "w": "לא כרגע — מייסד/CTO מ-4.2026 · צוער 2014-2017 · 8200/אמ\"ן 2017-2025 (Embedded, חוקר, ר\"צ ווב, מנהל קבוצת Linux) · 4M Analytics 2025-26 · Co-Founder & CTO סטלת׳ מ-4.2026 (2026-11-09)", "u": "https://www.linkedin.com/in/shachar-cohen-480b86205", "x": ""}, {"k": "stav-medina", "n": "Stav Medina", "g": "C", "t": "", "c": "Check Point", "y": null, "mo": null, "e": "יחידה: כן — 8200 (כותרת)", "w": "[הצעת אדם] לא נבדק — R&D Group Manager ב-Check Point מ-3.2025, ex-8200 Security Research Group Lead. בכיר", "u": "https://www.linkedin.com/in/stav-medina", "x": ""}, {"k": "udi-rot-aa9186b8", "n": "Udi Rot", "g": "C", "t": "", "c": "groundcover", "y": null, "mo": null, "e": "יחידה: כן — אמ\"ן (7 שנים)", "w": "[הצעת אדם] לא נבדק — Chief Architect ב-groundcover מ-9.2025, SWE שם מ-11.2022; 7 שנים אמ\"ן. מפתח חזק, דרגה 1", "u": "https://www.linkedin.com/in/udi-rot-aa9186b8", "x": "", "h": {"n": 3, "in": 1, "first": "2024-06-23", "last": "2025-03-24", "snip": "אהלן אדם, תודה על הפנייה - כרגע אני לא מחפש שינוי :) שבוע טוב", "snip_d": "2024-06-25", "circle": "circle_2"}}, {"k": "yuvalgenossar", "n": "Yuval Genossar", "g": "C", "t": "", "c": "IDF", "y": null, "mo": null, "e": "יחידה: כן — 8200/81 (כותרת)", "w": "[הצעת אדם] לא מתאים להגדרה — חומרה/RF, R&D Group Manager עד 5.2026", "u": "https://www.linkedin.com/in/yuvalgenossar", "x": ""}, {"k": "ziv-dromy-a6a78927b", "n": "Ziv Dromy", "g": "C", "t": "", "c": "8200 (עד 8.2025)", "y": null, "mo": null, "e": "יחידה: כן — 8200", "w": "[הצעת אדם] לא נבדק — 8200: Security Research TL → R&D PM → Acting R&D Group Manager עד 8.2025. אין תפקיד אחרי (פנוי?)", "u": "https://www.linkedin.com/in/ziv-dromy-a6a78927b", "x": ""}];
+const M={"mid": "talpiot_young_2026-11", "title": "צעירים יוצאי תלפיות · מפתחים", "sub": "צוערי תלפיות + שירות ביחידת מודיעין (8200 / 81 / 9900 / אמ\"ן) · מפתחים בלבד · מאגר שוק כללי, חיבור טבעי ל-Commandry", "teaser": "היי {name}, אני אדם, אני עובד עם CTO יוצא תלפיות שגייס $16M (Norwest, Marlin VC) ובונה צוות הנדסה מייסד. סייבר, מוצר שכבר נמכר לממשל האמריקאי. ראיתי את {hook} וחשבתי עליך. נדבר?", "notes": ["רק מי שנבדק לעומק (יש פסק דין) + כל מי שבטאב 'הצעות ושליחות'. A = מתאים, B = מתאים עם הסתייגות / גבולי / לא נבדק, C = לא מתאים או לא כרגע.", "גבולי = צוער מאומת אבל היחידה לא כתובה בפרופיל. מצו\"ב, חיל האוויר, מפא\"ת, תקשוב ומשרד רה\"מ לא נחשבים מודיעין.", "Oren Shauly: ב-Stealth מ-10.2022, ייתכן NewCore (לקוח). לבדוק לפני פנייה.", "לא לפנות לעובדי לקוחות (NewCore, Act, Arch, Sensos, Appcharge, Neo, Commandry).", "Commandry: פונים רק למי שאדם מעלה, הפתיחה תמיד 'אני עובד עם CTO יוצא תלפיות שגייס $16M'.", "לינקדאין במיצוי לפרויקט הזה (10.11). מקור נוסף אפשרי: הפניות מהמתאימים."]};
+let S={};const LK='tp:'+M.mid+':swipe';
+try{S=JSON.parse(localStorage.getItem(LK)||'{}')}catch(e){}
+let fG='A',fS='all',fq='',sortK='g',sortDir=1,db=null,hist=[];
+const $=id=>document.getElementById(id);
+const sid=k=>String(k).toLowerCase().replace(/[^a-z0-9_-]/g,'-');
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const COL={fit:'var(--A)',maybe:'var(--mb)',no:'var(--no)',connect:'var(--ac)'};
+const LAB={fit:'✓ מתאים',maybe:'? אולי',no:'✗ לא',connect:'🤝 חיבור'};
+function cache(){try{localStorage.setItem(LK,JSON.stringify(S))}catch(e){}}
+function toast(t){const el=$('toast');el.textContent=t;el.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('on'),1400)}
+async function copyText(t){try{await navigator.clipboard.writeText(t);return true}catch(e){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand('copy')}catch(_){}ta.remove();return ok}}
+const st=d=>S[sid(d.k)]?.s||'';
+const gpool=()=>D.filter(d=>fG==='all'||d.g===fG);
+const queue=()=>gpool().filter(d=>!st(d)&&!d.x);
+function kpi(){
+  const c=s=>D.filter(d=>st(d)===s).length,g=x=>D.filter(d=>d.g===x).length;
+  $('kpi').innerHTML=`<span><b>${D.length}</b> במאגר</span><span>A <b>${g('A')}</b> · B <b>${g('B')}</b> · C <b>${g('C')}</b></span><span>פנינו <b>${D.filter(d=>d.x).length}</b></span><span>✓ <b>${c('fit')}</b></span><span>? <b>${c('maybe')}</b></span><span>🤝 <b>${c('connect')}</b></span><span>✗ <b>${c('no')}</b></span><span>לא סומנו <b>${D.filter(d=>!st(d)&&!d.x).length}</b></span>`;
+}
+const fmtD=s=>{if(!s)return'';const [y,m]=s.split('-');return (+m)+'.'+y};
+const tlHTML=tl=>`<div class="tl">${tl.map(([dt,t,c])=>`<div><span class="dt">${esc(String(dt).replace(/\s*\(.*\)$/,''))}</span> ${esc(t||'')}${c?` <span class="co">· ${esc(c)}</span>`:''}</div>`).join('')}</div>`;
+function hsLine(d){const h=d.h;if(!h)return'';const p=[];if(h.n)p.push(`💬 ${h.n} הודעות איתך (${h.in} ממנו), אחרונה ${fmtD(h.last)}`);if(h.snip)p.push(`"${h.snip}"`);if(h.circle)p.push('מעגל: '+h.circle);return p.join(' · ')}
+function sheetHTML(d){const h=d.h||{};return `<button class="x" id="shx">סגור ✕</button>
+ <div class="top"><div class="avw">${d.p?`<img class="av" src="${d.p}" alt="">`:`<span class="av">${esc((d.n||'').slice(0,1))}</span>`}<span class="g ${d.g}">${d.g}</span></div><div style="min-width:0"><div class="nm">${esc(d.n)}</div><div class="cur">${esc(d.t)}${d.c?' · '+esc(d.c):''}</div></div></div>
+ ${d.w?`<div><h3>הערה</h3><div>${esc(d.w)}</div></div>`:''}
+ <div><h3>ציר קריירה</h3>${d.tl?tlHTML(d.tl):`<div class="hint" style="text-align:start">${d.e?esc(d.e)+' · ':''}הניסיון המלא עוד לא נאסף</div>`}</div>
+ ${d.ed?`<div><h3>השכלה</h3><div style="font-size:13px" dir="ltr">${esc(d.ed)}</div></div>`:''}
+ ${d.ab?`<div><h3>אודות</h3><div style="font-size:13px;color:var(--mu)" dir="auto">${esc(d.ab)}</div></div>`:''}
+ <div><h3>היסטוריה איתך</h3><div style="font-size:13px">${h.n?`${h.n} הודעות (${h.in} ממנו) · ${fmtD(h.first)} עד ${fmtD(h.last)}${h.snip?`<br>הודעה אחרונה ממנו (${fmtD(h.snip_d)}): "${esc(h.snip)}"`:''}`:'אין הודעות בלינקדאין (עד 9.11)'}${h.circle?`<br>מעגל במאגר: ${esc(h.circle)}`:''}${d.x?`<br>${esc(d.x)}`:''}</div></div>
+ <a class="lnk" href="${esc(d.u)}" target="_blank" rel="noopener">לפרופיל בלינקדאין ←</a>`}
+function openSheet(k){const d=D.find(x=>x.k===k);if(!d)return;$('shp').innerHTML=sheetHTML(d);$('sheet').classList.add('on');$('shp').scrollTop=0;$('shx').onclick=closeSheet}
+function closeSheet(){$('sheet').classList.remove('on')}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-more]');if(b){e.preventDefault();openSheet(b.dataset.more)}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet()});
+function cardHTML(d,cls){
+  return `<article class="card ${cls}" data-k="${esc(d.k)}">
+   <span class="stamp y">מתאים</span><span class="stamp n">לא</span><span class="stamp m">אולי</span>
+   <div class="top"><div class="avw">${d.p?`<img class="av" src="${d.p}" alt="" draggable="false">`:`<span class="av" aria-hidden="true">${esc((d.n||'').split(/\s+/).filter(w=>/^\p{L}/u.test(w)).slice(0,2).map(w=>w[0]).join('').toUpperCase())}</span>`}<span class="g ${d.g}">${d.g}</span></div><div style="min-width:0"><div class="nm">${esc(d.n)}</div><div class="cur">${esc(d.t)}${d.c?' · '+esc(d.c):''}</div></div></div>
+   <dl>${d.y!=null?`<dt>שנים</dt><dd>${esc(d.y)}</dd>`:''}${d.mo!=null?`<dt>בתפקיד</dt><dd>${esc(d.mo)} חודשים</dd>`:''}${!d.tl&&d.e?`<dt>מסלול</dt><dd>${esc(d.e)}</dd>`:''}</dl>
+   ${d.tl?tlHTML(d.tl.slice(0,5)):''}
+   ${hsLine(d)?`<div class="hs">${esc(hsLine(d))}</div>`:''}
+   ${d.w?`<div class="why"><div class="wc">${esc(d.w)}</div></div>`:''}
+   <div class="cbot"><button class="mbtn" data-more="${esc(d.k)}">פרופיל מלא ↑</button><a class="lnk" href="${esc(d.u)}" target="_blank" rel="noopener">לינקדאין ←</a></div>
+  </article>`;
+}
+let DRAG=false,PEND=false;
+function renderSwipe(){
+  if(DRAG){PEND=true;return}PEND=false;
+  const q=queue(),deck=$('deck');
+  const top=deck.querySelector('.card:not(.under)'),und=deck.querySelector('.card.under');
+  const same=q.length&&top&&top.dataset.k===q[0].k&&!top.classList.contains('anim')&&((und&&und.dataset.k)||'')===((q[1]&&q[1].k)||'');
+  if(!same)deck.innerHTML=q.length?(q[1]?cardHTML(q[1],'under'):'')+cardHTML(q[0],''):`<div class="done">סיימת את ${fG==='all'?'כולם':'רמה '+fG}. אפשר לעבור לרמה אחרת למעלה.</div>`;
+  ['bn','bm','by','bc'].forEach(id=>$(id).disabled=!q.length);
+  $('bu').disabled=!hist.length;
+  const p=gpool(),n=p.length||1,c=s=>p.filter(d=>st(d)===s).length;
+  $('pbar').innerHTML=[[p.filter(d=>d.x).length,'var(--C)'],[c('connect'),'var(--ac)'],[c('fit'),'var(--A)'],[c('maybe'),'var(--mb)'],[c('no'),'var(--no)']].map(([v,col])=>`<i style="width:${v/n*100}%;background:${col}"></i>`).join('');
+  if(!same)bindDrag();
+}
+const COLS=[['n','שם'],['g','רמה'],['c','חברה'],['t','תפקיד'],['y','שנים'],['mo','חודשים בתפקיד'],['w','הערה'],['x','פנייה'],['s','סימון']];
+function renderWeb(){
+  $('thr').innerHTML=COLS.map(([k,l])=>`<th><button data-k="${k}" ${sortK===k?`data-dir="${sortDir>0?'▲':'▼'}"`:''}>${l}</button></th>`).join('');
+  const q=fq.trim().toLowerCase();
+  let r=D.filter(d=>(fG==='all'||d.g===fG)&&(fS==='all'||(fS==='open'?(!st(d)&&!d.x):fS==='x'?!!d.x:st(d)===fS))&&(!q||[d.n,d.c,d.t,d.w,d.e,d.x].join(' ').toLowerCase().includes(q)));
+  const val=(d,k)=>k==='s'?st(d):k==='g'?d.g:d[k]??'';
+  r.sort((a,b)=>{const x=val(a,sortK),y=val(b,sortK);return (typeof x==='number'&&typeof y==='number'?x-y:String(x).localeCompare(String(y),'he'))*sortDir});
+  $('tb').innerHTML=r.length?r.map(d=>{const s=st(d);return `<tr class="${s==='no'?'dim':''}"><td><a href="${esc(d.u)}" target="_blank" rel="noopener">${esc(d.n)}</a><button class="ninf" data-more="${esc(d.k)}" aria-label="פרופיל מלא">ⓘ</button></td><td><span class="gp ${d.g}">${d.g}</span></td><td><div class="t2" title="${esc(d.c)}">${esc(d.c)}</div></td><td><div class="t2" title="${esc(d.t)}">${esc(d.t)}</div></td><td class="n">${d.y??''}</td><td class="n">${d.mo??''}</td><td><div class="w" title="לחיצה לפתיחה">${esc(d.w)}</div></td><td>${d.x?`<span class="xs">${esc(d.x)}</span>`:''}</td><td><div class="ibs">${['fit','maybe','connect','no'].map(a=>`<button class="ib ${a}" data-k="${esc(d.k)}" data-a="${a}" aria-pressed="${s===a}" aria-label="${LAB[a]}">${LAB[a].split(' ')[0]}</button>`).join('')}</div></td></tr>`}).join(''):`<tr><td colspan="${COLS.length}" class="empty">אין שורות בסינון הזה.</td></tr>`;
+}
+document.addEventListener('click',e=>{const w=e.target.closest('td .w');if(w)w.classList.toggle('open')});
+function lists(){
+  for(const [s,lid,sumid] of [['connect','lcn','scn'],['fit','lfit','sfit'],['maybe','lmb','smb'],['no','lno','sno']]){
+    const r=D.filter(d=>st(d)===s);
+    $(sumid).textContent=`${LAB[s]} (${r.length})`;
+    $(lid).innerHTML=r.length?r.map(d=>`<div class="li"><span class="dot" style="background:${COL[s]}"></span><a href="${esc(d.u)}" target="_blank" rel="noopener">${esc(d.n)}</a><span class="t">${d.g} · ${esc(d.c||'')}</span><button data-un="${esc(d.k)}">החזר</button></div>`).join(''):'<span class="hint">עוד אין.</span>';
+  }
+}
+function view(){return location.hash==='#web'?'web':location.hash==='#swipe'?'swipe':(innerWidth>=900?'web':'swipe')}
+function render(){
+  const v=view();document.body.classList.toggle('web',v==='web');
+  $('vsw').hidden=v!=='swipe';$('vwb').hidden=v!=='web';
+  $('tsw').setAttribute('aria-current',v==='swipe'?'page':'false');$('twb').setAttribute('aria-current',v==='web'?'page':'false');
+  kpi();lists();v==='swipe'?renderSwipe():renderWeb();
+}
+async function mark(k,a){
+  const id=sid(k),d=D.find(x=>x.k===k);
+  if(st(d)===a){return unmark(k)}
+  const body={s:a,d:new Date().toISOString().slice(0,10),n:d.n,g:d.g,u:d.u,k};
+  S[id]=body;hist.push(k);cache();render();
+  if(NX.on){try{await nSave(k,a)}catch(e){toast(nErr(e))}return}
+  if(db){try{await db.collection('screen').doc(id).set(body)}catch(e){toast('השמירה בענן נכשלה, נשמר מקומית')}}
+}
+async function unmark(k){
+  const id=sid(k);delete S[id];hist=hist.filter(x=>x!==k);cache();render();
+  if(NX.on){try{await nSave(k,null)}catch(e){toast(nErr(e))}return}
+  if(db){try{await db.collection('screen').doc(id).delete()}catch(e){toast('השמירה בענן נכשלה')}}
+}
+function fly(a){
+  const el=document.querySelector('#deck .card:not(.under)');if(!el)return;
+  const k=el.dataset.k;el.classList.add('anim');
+  el.style.transform=a==='fit'?'translate3d(140%,0,0) rotate(18deg)':a==='no'?'translate3d(-140%,0,0) rotate(-18deg)':a==='connect'?'translateY(130%)':'translateY(-120%)';
+  el.style.opacity='0';
+  setTimeout(()=>mark(k,a),matchMedia('(prefers-reduced-motion: reduce)').matches?0:220);
+}
+function bindDrag(){
+  const el=document.querySelector('#deck .card:not(.under)');if(!el)return;
+  /* the deck has touch-action:none, so the browser never scrolls/pans while a finger is on the card:
+     one pointer stream for mouse+touch, painted once per frame. page scroll still works outside the card. */
+  let x0=0,y0=0,dx=0,dy=0,on=false,raf=0,pid=null;
+  const under=document.querySelector('#deck .card.under');
+  const sY=el.querySelector('.stamp.y'),sN=el.querySelector('.stamp.n'),sM=el.querySelector('.stamp.m');
+  const paint=()=>{raf=0;const up=Math.min(dy,0);
+    el.style.transform=`translate3d(${dx}px,${up}px,0) rotate(${dx/20}deg)`;
+    sY.style.opacity=Math.min(1,Math.max(0,dx/80));sN.style.opacity=Math.min(1,Math.max(0,-dx/80));
+    sM.style.opacity=Math.abs(dx)<50?Math.min(1,Math.max(0,-up/80)):0;
+    if(under){const p=Math.min(1,Math.hypot(dx,up)/120);under.style.transform=`scale(${.95+.05*p}) translateY(${10-10*p}px)`;under.style.opacity=.6+.4*p}};
+  const req=()=>{if(!raf)raf=requestAnimationFrame(paint)};
+  const reset=()=>{el.classList.add('anim');el.style.transform='';[sY,sN,sM].forEach(s=>s.style.opacity=0);
+    if(under){under.classList.add('anim');under.style.transform='';under.style.opacity=''}
+    setTimeout(()=>{el.classList.remove('anim');under&&under.classList.remove('anim')},300)};
+  el.addEventListener('pointerdown',e=>{if(on||e.target.closest('a,button'))return;on=true;pid=e.pointerId;x0=e.clientX;y0=e.clientY;dx=dy=0;
+    el.classList.remove('anim');DRAG=true;try{el.setPointerCapture(pid)}catch(_){}});
+  el.addEventListener('pointermove',e=>{if(!on||e.pointerId!==pid)return;dx=e.clientX-x0;dy=e.clientY-y0;req()});
+  const end=e=>{if(!on||e.pointerId!==pid)return;on=false;DRAG=false;if(raf){cancelAnimationFrame(raf);raf=0}
+    const w=el.offsetWidth||360,th=Math.min(90,w*.22);
+    if(dx>th)fly('fit');else if(dx<-th)fly('no');else if(dy<-90&&Math.abs(dx)<50)fly('maybe');else{reset();if(PEND)setTimeout(renderSwipe,320)}};
+  el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end);
+}
+$('h1').textContent=M.title;$('sub').textContent=M.sub||'';
+$('tz').textContent='הפתק שיישלח (מותאם לכל אחד): '+(M.teaser||'');
+$('notes').innerHTML=(M.notes||[]).map(n=>`<li>${esc(n)}</li>`).join('')||'<li>אין.</li>';
+$('by').onclick=()=>fly('fit');$('bn').onclick=()=>fly('no');$('bm').onclick=()=>fly('maybe');$('bc').onclick=()=>fly('connect');
+$('bu').onclick=()=>{const k=hist.pop();if(k)unmark(k)};
+document.addEventListener('keydown',e=>{if(view()!=='swipe'||e.target.closest('input,textarea')||$('sheet').classList.contains('on'))return;if(e.key==='ArrowRight')fly('fit');else if(e.key==='ArrowLeft')fly('no');else if(e.key==='ArrowUp')fly('maybe');else if((e.metaKey||e.ctrlKey)&&e.key==='z'){const k=hist.pop();if(k)unmark(k)}});
+document.querySelector('.wrap').addEventListener('click',e=>{
+  const u=e.target.closest('[data-un]');if(u){unmark(u.dataset.un);return}
+  const ib=e.target.closest('.ib');if(ib){mark(ib.dataset.k,ib.dataset.a);return}
+  const th=e.target.closest('th button');if(th){const k=th.dataset.k;if(sortK===k)sortDir=-sortDir;else{sortK=k;sortDir=1}renderWeb();return}
+});
+$('fg').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;document.querySelectorAll('#fg .chip').forEach(c=>c.setAttribute('aria-pressed',c===b));fG=b.dataset.g;render()});
+$('fs').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;document.querySelectorAll('#fs .chip').forEach(c=>c.setAttribute('aria-pressed',c===b));fS=b.dataset.s;renderWeb()});
+$('q').addEventListener('input',e=>{fq=e.target.value;renderWeb()});
+const co=d=>d.c||'';
+$('copycn').addEventListener('click',async()=>{const r=D.filter(d=>st(d)==='connect');if(!r.length){toast('עוד אין מסומנים לחיבור');return}toast(await copyText(r.map(d=>`${d.n}\t${d.u}\t${(M.teaser||'').replace('{שם}',d.n.split(' ')[0]).replace('{חברה}',co(d))}`).join('\n'))?`הועתקו ${r.length}`:'ההעתקה נכשלה')});
+$('copyfit').addEventListener('click',async()=>{const f=D.filter(d=>st(d)==='fit');if(!f.length){toast('עוד אין מסומנים ✓');return}toast(await copyText(f.map(d=>`${d.n}\t${d.g}\t${d.u}`).join('\n'))?`הועתקו ${f.length}`:'ההעתקה נכשלה')});
+addEventListener('hashchange',render);
+let rw;addEventListener('resize',()=>{if(location.hash)return;clearTimeout(rw);rw=setTimeout(render,150)});
+render();
+/* ---- Notion: shared with the iPhone app and every Claude session ---- */
+const NX={on:false,mcp:null,ids:{},
+  DS:'collection://0adba494-d721-44c2-8fb8-9df400a6c1da',
+  TO:{fit:'מתאים',maybe:'אולי',no:'לא',connect:'חיבור'},
+  FROM:{'מתאים':'fit','אולי':'maybe','לא':'no','חיבור':'connect'}};
+NX.Q={data:{data_source_urls:[NX.DS],query:`SELECT url, "Key", "Decision", "date:Decided:start" FROM "${NX.DS}" WHERE "Mine" = ?`,params:[M.mid]}};
+function nErr(e){const c=e&&e.code;
+  if(c==='needs_reauth'||c==='server_not_connected')return 'צריך לחבר את Notion בהגדרות Claude › Connectors';
+  if(c==='approval_required'||c==='not_in_manifest')return 'המכרה צריך אישור לגשת ל-Notion';
+  return 'השמירה ב-Notion לא הושלמה, כדאי לבדוק שם'}
+function nApply(p){const rows=p&&Array.isArray(p.results)?p.results:null;if(!rows)return false;
+  const n={};rows.forEach(r=>{const m=String(r.url||'').match(/([0-9a-f]{32})/i);if(r.Key&&m)NX.ids[r.Key]=m[1];
+    const s=NX.FROM[r.Decision];if(r.Key&&s){const d=D.find(x=>x.k===r.Key);n[sid(r.Key)]={s,d:String(r['date:Decided:start']||'').slice(0,10),n:d?d.n:r.Key,g:d?d.g:'',u:d?d.u:'',k:r.Key}}});
+  S=n;cache();render();$('sync').textContent='✓ מסונכרן עם Notion';return true}
+async function nSave(k,a){const pid=NX.ids[k];if(!pid)throw {code:'missing'};
+  const props={Decision:a?NX.TO[a]:null,'Decided by':'אדם (מכרה במחשב)'};
+  if(a){props['date:Decided:start']=new Date().toISOString().slice(0,10);props['date:Decided:is_datetime']=0}else{props['date:Decided:start']=null}
+  await NX.mcp.callTool('Notion','notion-update-page',{page_id:pid,command:'update_properties',properties:props,allow_async:false});
+  try{await NX.mcp.invalidate('Notion','notion-query-data-sources')}catch(e){}}
+async function nBoot(){
+  try{NX.mcp=await window.claude?.use?.('mcp')}catch(e){NX.mcp=null}
+  if(!NX.mcp)return false;
+  try{const r=await NX.mcp.callTool('Notion','notion-query-data-sources',NX.Q,{cache:{refresh:true,staleTime:10000,gcTime:600000}});
+    if(!nApply(r&&r.payload)||!Object.keys(NX.ids).length)return false}catch(e){return false}
+  NX.on=true;
+  NX.mcp.watchTool('Notion','notion-query-data-sources',NX.Q,ev=>{if(ev.type==='data')nApply(ev.result&&ev.result.payload)},{refetchInterval:30000,cache:{staleTime:10000,gcTime:600000}});
+  addEventListener('visibilitychange',()=>{if(!document.hidden)NX.mcp.invalidate('Notion','notion-query-data-sources').catch(()=>{})});
+  return true}
+(async()=>{
+  const sy=$('sync');
+  sy.textContent='מתחבר ל-Notion…';
+  if(await nBoot())return;
+  const tm=setTimeout(()=>{if(!db)sy.textContent='שמירה מקומית בלבד'},10000);
+  try{db=await window.claude?.use?.('db')}catch(e){db=null}
+  if(!db){clearTimeout(tm);sy.textContent='שמירה מקומית בלבד';return}
+  db.collection('screen').onSnapshot(snap=>{clearTimeout(tm);const n={};snap.docs.forEach(x=>{const v=x.data();if(v&&v.s)n[x.id]=v});S=n;cache();render();sy.textContent='✓ נשמר בענן'},()=>{clearTimeout(tm);sy.textContent='שמירה מקומית בלבד';db=null});
+})();
+</script>
+
+</body></html>
