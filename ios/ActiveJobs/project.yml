@@ -1,0 +1,54 @@
+name: ActiveJobs
+options:
+  bundleIdPrefix: app.activejobs
+  deploymentTarget:
+    iOS: "17.0"
+  developmentLanguage: he
+settings:
+  base:
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    SWIFT_VERSION: "5.9"
+    DEVELOPMENT_TEAM: ""
+    CODE_SIGN_STYLE: Automatic
+targets:
+  ActiveJobs:
+    type: application
+    platform: iOS
+    sources: [App, Shared]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: app.activejobs.ActiveJobs
+        TARGETED_DEVICE_FAMILY: "1"
+    info:
+      path: App/Info.plist
+      properties:
+        CFBundleDisplayName: משרות
+        CFBundleDevelopmentRegion: he
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        ITSAppUsesNonExemptEncryption: false
+    entitlements:
+      path: App/ActiveJobs.entitlements
+      properties:
+        com.apple.security.application-groups: [group.app.activejobs]
+    dependencies:
+      - target: ActiveJobsWidget
+  ActiveJobsWidget:
+    type: app-extension
+    platform: iOS
+    sources: [Widget, Shared]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: app.activejobs.ActiveJobs.Widget
+        TARGETED_DEVICE_FAMILY: "1"
+    info:
+      path: Widget/Info.plist
+      properties:
+        CFBundleDisplayName: משרות
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    entitlements:
+      path: Widget/ActiveJobsWidget.entitlements
+      properties:
+        com.apple.security.application-groups: [group.app.activejobs]

@@ -233,10 +233,10 @@ h1 { font-family: var(--font-display); font-size: 34px; font-weight: 700; letter
     <div class="group">
       <div class="field col"><label class="lbl" for="f-memo">הערות</label><textarea id="f-memo" maxlength="2000" placeholder="מי בתהליך, מה חסר, הצעד הבא"></textarea></div>
     </div>
-    <button type="button" class="del" id="delBtn" hidden>מחיקת המשרה</button>
+    <button type="button" class="del" id="delBtn" hidden>סגירת המשרה</button>
     <div class="confirm" id="confirmDel" hidden>
-      <span>המשרה תימחק לצמיתות.</span>
-      <div><button type="button" id="delNo">ביטול</button><button type="button" class="yes" id="delYes">מחיקה</button></div>
+      <span>המשרה תסומן כנסגרה ותישאר ב-Notion.</span>
+      <div><button type="button" id="delNo">ביטול</button><button type="button" class="yes" id="delYes">סגירה</button></div>
     </div>
   </form>
 </div>
@@ -262,7 +262,7 @@ const store = {
   set(k, v) { try { localStorage.setItem(k, v); } catch {} },
 };
 
-let db = null, raw = [], loaded = false, readOnly = false;
+let raw = [], loaded = false, readOnly = false;
 let filter = store.get("jobs.filter", "open");
 let view = store.get("jobs.view", "company");
 let openId = null, editing = null, form = { status: "active", stages: { outreach: 0, interview: 0, offer: 0 } };
@@ -376,9 +376,53 @@ function render() {
   }).join("");
 }
 
-/* ---------- quick writes (coalesced, one write at a time per doc) ---------- */
+/* ---------- Notion data layer ---------- */
+const NOTION = "Notion";
+const DS = "collection://4c9b4c8f-c6d5-4655-9411-646a1ae53fd3";
+const DS_ID = "4c9b4c8f-c6d5-4655-9411-646a1ae53fd3";
+const SQL = `SELECT url, "Role", "Company", "Status", "Outreach", "Interview", "Offer", "Hot", "Location", "Notes", "Link", "date:Updated:start", "Updated by", "Last edited" FROM "${DS}"`;
+const QUERY_INPUT = { data: { data_source_urls: [DS], query: SQL } };
+const ST_TO_HE = { active: "פעילה", verify: "לאימות", hold: "בהמתנה", closed: "נסגרה" };
+const HE_TO_ST = { "פעילה": "active", "לאימות": "verify", "בהמתנה": "hold", "נסגרה": "closed" };
+let mcp = null;
+
+function pageId(url) { const m = String(url || "").match(/([0-9a-f]{32})/i); return m ? m[1] : String(url || ""); }
+function fromRow(r) {
+  return {
+    id: pageId(r.url), url: r.url,
+    role: r.Role || "", company: r.Company || "", status: HE_TO_ST[r.Status] || "verify",
+    stages: { outreach: +r.Outreach || 0, interview: +r.Interview || 0, offer: +r.Offer || 0 },
+    hot: r.Hot === "__YES__", location: r.Location || "", memo: r.Notes || "", link: r.Link || "",
+    updatedAt: r["date:Updated:start"] || r["Last edited"] || "", updatedBy: r["Updated by"] || "",
+  };
+}
+function toProps(p) {
+  const o = {};
+  if ("role" in p) o.Role = p.role;
+  if ("company" in p) o.Company = p.company;
+  if ("status" in p) o.Status = ST_TO_HE[p.status];
+  if (p.stages) { o.Outreach = p.stages.outreach; o.Interview = p.stages.interview; o.Offer = p.stages.offer; }
+  if ("hot" in p) o.Hot = p.hot ? "__YES__" : "__NO__";
+  if ("location" in p) o.Location = p.location;
+  if ("memo" in p) o.Notes = p.memo;
+  if ("link" in p) o.Link = p.link || null;
+  o["date:Updated:start"] = p.updatedAt || new Date().toISOString();
+  o["date:Updated:is_datetime"] = 1;
+  o["Updated by"] = "אדם (לוח)";
+  return o;
+}
+function applyRows(payload) {
+  const rows = Array.isArray(payload?.results) ? payload.results : null;
+  if (!rows) return false;
+  raw = rows.map(fromRow); loaded = true; $("banner").hidden = true; render(); return true;
+}
+async function refreshNow() {
+  try { await mcp.invalidate(NOTION, "notion-query-data-sources"); } catch {}
+}
+
+/* ---------- quick writes (coalesced, one write at a time per page) ---------- */
 function queue(id, patch) {
-  if (readOnly || !db) return;
+  if (readOnly || !mcp) return;
   const base = norm({ ...(raw.find(j => j.id === id) || {}), ...(pending[id] || {}) });
   const next = { ...(pending[id] || {}), ...patch, updatedAt: new Date().toISOString() };
   const stages = next.stages || base.stages;
@@ -392,14 +436,24 @@ async function flush(id) {
   if (inflight[id]) { timers[id] = setTimeout(() => flush(id), 400); return; }
   const p = pending[id]; if (!p) return;
   inflight[id] = true;
-  try { await db.collection("jobs").doc(id).update(p); if (pending[id] === p) delete pending[id]; }
+  try {
+    await mcp.callTool(NOTION, "notion-update-page", { page_id: id, command: "update_properties", properties: toProps(p), allow_async: false });
+    raw = raw.map(j => j.id === id ? { ...j, ...p } : j);
+    if (pending[id] === p) delete pending[id];
+    refreshNow();
+  }
   catch (e) { delete pending[id]; toast(errText(e)); }
   finally { inflight[id] = false; render(); }
 }
 function errText(e) {
-  if (e?.code === "invalid_argument") { readOnly = true; return "אין לך הרשאת עריכה בלוח הזה"; }
-  if (e?.code === "quota_exceeded") return "המאגר מלא. כדאי למחוק משרות שנסגרו";
-  return "השמירה לא הצליחה. נסה שוב בעוד רגע";
+  switch (e?.code) {
+    case "needs_reauth": return "צריך לחבר מחדש את Notion בהגדרות Claude › Connectors";
+    case "server_not_connected": return "Notion לא מחובר. מוסיפים אותו בהגדרות Claude › Connectors";
+    case "not_in_manifest": case "approval_required": return "הלוח צריך אישור לגשת ל-Notion";
+    case "blocked_by_policy": readOnly = true; return "הארגון חוסם עריכה ב-Notion מהלוח";
+    case "tool_error": return "Notion סירב לשינוי. נסה שוב או ערוך ישירות ב-Notion";
+    default: return "השמירה לא הושלמה. בדוק ב-Notion לפני שמנסים שוב";
+  }
 }
 
 /* ---------- events ---------- */
@@ -472,14 +526,13 @@ $("cancel").onclick = closeSheet; $("scrim").onclick = closeSheet;
 document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("sheet").hidden) closeSheet(); });
 $("delBtn").onclick = () => { $("confirmDel").hidden = false; $("delBtn").hidden = true; };
 $("delNo").onclick = () => { $("confirmDel").hidden = true; $("delBtn").hidden = false; };
-$("delYes").onclick = async () => {
-  if (!db || !editing) return;
-  try { await db.collection("jobs").doc(editing.id).delete(); if (openId === editing.id) openId = null; closeSheet(); toast("המשרה נמחקה"); }
-  catch (e) { toast(errText(e)); }
+$("delYes").onclick = () => {
+  if (!mcp || !editing) return;
+  queue(editing.id, { status: "closed" }); closeSheet(); toast("המשרה סומנה כנסגרה");
 };
 $("form").addEventListener("submit", async e => {
   e.preventDefault();
-  if (!db) { toast("הלוח עוד לא מחובר"); return; }
+  if (!mcp) { toast("הלוח עוד לא מחובר ל-Notion"); return; }
   const now = new Date().toISOString();
   const body = {
     company: $("f-company").value.trim(), role: $("f-role").value.trim(), status: form.status,
@@ -491,34 +544,72 @@ $("form").addEventListener("submit", async e => {
   $("save").disabled = true;
   const wasEdit = !!editing;
   try {
-    const col = db.collection("jobs");
-    if (editing) { delete pending[editing.id]; await col.doc(editing.id).update(body); }
-    else { const ref = await col.add({ ...body, createdAt: now }); openId = ref.id; }
-    closeSheet(); toast(wasEdit ? "נשמר" : "המשרה נוספה");
+    if (editing) {
+      const id = editing.id; delete pending[id];
+      await mcp.callTool(NOTION, "notion-update-page", { page_id: id, command: "update_properties", properties: toProps(body), allow_async: false });
+      raw = raw.map(j => j.id === id ? { ...j, ...body } : j);
+    } else {
+      const res = await mcp.callTool(NOTION, "notion-create-pages", { parent: { data_source_id: DS_ID }, pages: [{ properties: toProps(body) }], allow_async: false });
+      const created = res?.payload?.pages?.[0];
+      if (created) { raw = [...raw, { ...body, id: pageId(created.id || created.url) }]; openId = pageId(created.id || created.url); }
+    }
+    closeSheet(); toast(wasEdit ? "נשמר ב-Notion" : "המשרה נוספה ל-Notion"); render(); refreshNow();
   } catch (err) { toast(errText(err)); }
   finally { $("save").disabled = readOnly; }
 });
 
 render();
 
-(async () => {
-  const banner = $("banner");
-  db = await (window.claude?.use ? window.claude.use("db") : Promise.resolve(null));
-  if (!db) {
+function showBanner(msg, action) {
+  const b = $("banner");
+  b.innerHTML = `${esc(msg)}${action ? ` <button type="button" class="tbtn" id="bannerBtn" style="margin-inline-start:8px">${esc(action)}</button>` : ""}`;
+  b.hidden = false;
+  return action ? $("bannerBtn") : null;
+}
+let unwatch = null;
+function startWatch() {
+  if (unwatch) return;
+  unwatch = mcp.watchTool(NOTION, "notion-query-data-sources", QUERY_INPUT, ev => {
+    if (ev.type === "data") { applyRows(ev.result?.payload); return; }
+    const code = ev.error?.code;
+    if (["needs_reauth", "server_not_connected", "blocked_by_policy", "approval_required", "not_in_manifest"].includes(code)) {
+      raw = []; loaded = true; render(); askToConnect(code);
+    } else if (code === "bad_request" || code === "capability_removed") {
+      // Older shell without watch: poll by hand once a minute.
+      unwatch = null; setInterval(() => loadOnce(true), 60000);
+    } else if (!raw.length) {
+      loaded = true; render(); showBanner("Notion לא עונה כרגע. הלוח ינסה שוב לבד.");
+    }
+  }, { refetchInterval: 60000, cache: { staleTime: 15000, gcTime: 600000 } });
+}
+async function loadOnce(quiet) {
+  try {
+    const res = await mcp.callTool(NOTION, "notion-query-data-sources", QUERY_INPUT, { cache: { refresh: true, staleTime: 15000, gcTime: 600000 } });
+    if (!applyRows(res?.payload) && !quiet) { loaded = true; render(); showBanner("התשובה מ-Notion לא בפורמט הצפוי."); }
+    return true;
+  } catch (e) {
     loaded = true; render();
-    banner.textContent = "הלוח זמין רק כשפותחים אותו מתוך Claude עם החשבון שלך.";
-    banner.hidden = false; $("fab").hidden = true; return;
+    if (!quiet) askToConnect(e?.code);
+    return false;
   }
-  const timer = setTimeout(() => { banner.textContent = "החיבור איטי. הלוח ממשיך לנסות לטעון."; banner.hidden = false; }, 10000);
-  db.collection("jobs").onSnapshot(snap => {
-    raw = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    loaded = true;
-    if (!snap.metadata.fromCache) { clearTimeout(timer); banner.hidden = true; }
-    render();
-  }, () => {
-    clearTimeout(timer); loaded = true; render();
-    banner.textContent = "אין גישה למשרות כרגע. רענון הדף בעוד רגע אמור לעזור.";
-    banner.hidden = false;
-  });
+}
+function askToConnect(code) {
+  const msg = errText({ code });
+  const btn = showBanner(msg, code === "approval_required" || code === "not_in_manifest" || code === "upstream_error" ? "חיבור ל-Notion" : null);
+  if (btn) btn.onclick = async () => { if (await loadOnce()) { $("banner").hidden = true; startWatch(); } };
+}
+
+(async () => {
+  mcp = await (window.claude?.use ? window.claude.use("mcp") : Promise.resolve(null));
+  if (!mcp) {
+    loaded = true; render();
+    showBanner("הלוח זמין רק כשפותחים אותו מתוך Claude עם החשבון שלך.");
+    $("fab").hidden = true; return;
+  }
+  const timer = setTimeout(() => { if (!loaded) showBanner("Notion איטי כרגע. הלוח ממשיך לנסות."); }, 10000);
+  const ok = await loadOnce();
+  clearTimeout(timer);
+  if (ok) startWatch();
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) refreshNow(); });
 })();
 </script>
