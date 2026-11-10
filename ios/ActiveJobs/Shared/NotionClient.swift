@@ -32,7 +32,7 @@ enum NotionError: LocalizedError {
         switch self {
         case .missingToken: return "צריך להדביק מפתח Notion בהגדרות."
         case .http(401, _): return "המפתח של Notion לא תקין. בדוק אותו בהגדרות."
-        case .http(404, _): return "ל-integration אין גישה לטבלת המשרות. שתף אותה איתו ב-Notion (Connections)."
+        case .http(404, _): return "לחיבור \"משרות\" אין גישה לטבלה ב-Notion. בטבלה: ⋯ › Connections › משרות."
         case .http(429, _): return "Notion מבקש להאט. נסה שוב בעוד רגע."
         case .http(let code, let msg): return "Notion החזיר שגיאה \(code). \(msg)"
         case .badResponse: return "התשובה מ-Notion לא בפורמט הצפוי."
@@ -47,7 +47,7 @@ struct NotionClient {
 
     // MARK: Requests
 
-    private func request(_ path: String, method: String, body: [String: Any]?) async throws -> [String: Any] {
+    func request(_ path: String, method: String, body: [String: Any]?) async throws -> [String: Any] {
         guard !token.isEmpty else { throw NotionError.missingToken }
         var req = URLRequest(url: base.appendingPathComponent(path))
         req.httpMethod = method
@@ -119,7 +119,8 @@ struct NotionClient {
             notes: text("Notes"),
             link: p("Link")["url"] as? String ?? "",
             updated: dateString.flatMap(parseDate),
-            updatedBy: text("Updated by")
+            updatedBy: text("Updated by"),
+            clientID: ((p("Client")["relation"] as? [[String: Any]])?.first?["id"] as? String)
         )
     }
 

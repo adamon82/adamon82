@@ -37,7 +37,7 @@ struct SettingsView: View {
                 Section("איך משיגים מפתח (פעם אחת)") {
                     Text("1. פותחים notion.so/profile/integrations ויוצרים Internal integration בשם \"משרות\".")
                     Text("2. מעתיקים את ה-Internal Integration Secret ומדביקים למעלה.")
-                    Text("3. ב-Notion, בטבלת \"משרות פעילות\": ⋯ › Connections › מוסיפים את \"משרות\".")
+                    Text("3. ב-Notion, בשלוש הטבלאות \"משרות פעילות\", \"מועמדים\" ו-\"Customers \Text("3. ב-Notion, בטבלת \"משרות פעילות\": ⋯ › Connections › מוסיפים את \"משרות\".") Pitche\": ⋯ › Connections › מוסיפים את \"משרות\".")
                     Button("פתיחת דף ה-integrations") { openURL(URL(string: "https://www.notion.so/profile/integrations")!) }
                     Button("פתיחת טבלת המשרות") { openURL(AppConfig.databaseURL) }
                 }

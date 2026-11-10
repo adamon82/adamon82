@@ -49,6 +49,7 @@ struct Job: Identifiable, Hashable, Codable {
     var link: String
     var updated: Date?
     var updatedBy: String
+    var clientID: String? = nil
 
     static func blank() -> Job {
         Job(id: "", role: "", company: "", status: .active, outreach: 0, interview: 0, offer: 0,
