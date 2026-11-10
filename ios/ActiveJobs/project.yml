@@ -20,6 +20,7 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: app.activejobs.ActiveJobs
         TARGETED_DEVICE_FAMILY: "1"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
     info:
       path: App/Info.plist
       properties:
@@ -28,10 +29,6 @@ targets:
         UILaunchScreen: {}
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         ITSAppUsesNonExemptEncryption: false
-    entitlements:
-      path: App/ActiveJobs.entitlements
-      properties:
-        com.apple.security.application-groups: [group.app.activejobs]
     dependencies:
       - target: ActiveJobsWidget
   ActiveJobsWidget:
@@ -48,7 +45,3 @@ targets:
         CFBundleDisplayName: משרות
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
-    entitlements:
-      path: Widget/ActiveJobsWidget.entitlements
-      properties:
-        com.apple.security.application-groups: [group.app.activejobs]
