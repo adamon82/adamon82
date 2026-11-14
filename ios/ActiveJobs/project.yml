@@ -31,6 +31,7 @@ targets:
         ITSAppUsesNonExemptEncryption: false
     dependencies:
       - target: ActiveJobsWidget
+      - target: ShareToJobs
   ActiveJobsWidget:
     type: app-extension
     platform: iOS
@@ -45,12 +46,33 @@ targets:
         CFBundleDisplayName: משרות
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
+  ShareToJobs:
+    type: app-extension
+    platform: iOS
+    sources: [Share, Shared]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: app.activejobs.ActiveJobs.Share
+        TARGETED_DEVICE_FAMILY: "1"
+    info:
+      path: Share/Info.plist
+      properties:
+        CFBundleDisplayName: משרות
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.share-services
+          NSExtensionPrincipalClass: ShareViewController
+          NSExtensionAttributes:
+            NSExtensionActivationRule:
+              NSExtensionActivationSupportsText: true
+              NSExtensionActivationSupportsWebURLWithMaxCount: 1
+              NSExtensionActivationSupportsFileWithMaxCount: 1
 schemes:
   ActiveJobs:
     build:
       targets:
         ActiveJobs: all
         ActiveJobsWidget: all
+        ShareToJobs: all
     run:
       config: Debug
     archive:

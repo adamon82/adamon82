@@ -30,6 +30,8 @@ struct Candidate: Identifiable, Hashable {
     var why: String
     var career: [String]
     var linkedIn: String
+    var source: String = ""
+    var note: String = ""
 }
 
 enum AppIDs {
@@ -76,7 +78,7 @@ extension NotionClient {
         return Candidate(
             id: id,
             name: text("Name"),
-            grade: sel("Grade") ?? "B",
+            grade: sel("Grade") ?? "חדש",
             decision: sel("Decision").flatMap(Decision.init(rawValue:)),
             contacted: p("Contacted")["checkbox"] as? Bool ?? false,
             title: text("Title"),
@@ -84,7 +86,9 @@ extension NotionClient {
             years: (p("Years")["number"] as? NSNumber)?.doubleValue,
             why: text("Why"),
             career: text("Career").split(separator: "\n").map(String.init),
-            linkedIn: p("LinkedIn")["url"] as? String ?? ""
+            linkedIn: p("LinkedIn")["url"] as? String ?? "",
+            source: [sel("Source"), text("Source detail")].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · "),
+            note: text("Note")
         )
     }
 }
@@ -325,7 +329,7 @@ struct CandidateCard: View {
                 ZStack(alignment: .bottomLeading) {
                     Circle().fill(Color(.tertiarySystemFill)).frame(width: 58, height: 58)
                         .overlay(Text(initials).font(.title3.weight(.bold)).foregroundStyle(.secondary))
-                    Text(c.grade)
+                    Text(c.grade.count == 1 ? c.grade : "★")
                         .font(.caption.weight(.heavy)).foregroundStyle(.white)
                         .frame(width: 24, height: 24)
                         .background(gradeColor, in: Circle())
@@ -339,12 +343,21 @@ struct CandidateCard: View {
                 }
             }
 
+            if !c.source.isEmpty {
+                Label("מקור: \(c.source)", systemImage: "person.2.fill")
+                    .font(.footnote.weight(.semibold)).foregroundStyle(Theme.tint)
+            }
+
             if !c.why.isEmpty {
                 Text(c.why)
                     .font(.subheadline)
                     .padding(12)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(Color(.tertiarySystemFill), in: RoundedRectangle(cornerRadius: 14))
+            }
+
+            if c.why.isEmpty && !c.note.isEmpty {
+                Text(c.note).font(.footnote).foregroundStyle(.secondary).lineLimit(5)
             }
 
             if !c.career.isEmpty {
