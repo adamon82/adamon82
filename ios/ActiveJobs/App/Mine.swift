@@ -145,6 +145,7 @@ final class MineStore {
 // MARK: - Mine (swipe) view
 
 struct MineView: View {
+    @Environment(JobStore.self) private var jobs
     @State private var store: MineStore
     @State private var drag: CGSize = .zero
     @State private var showList: Decision?
@@ -170,7 +171,7 @@ struct MineView: View {
                                            description: Text("הרשימות למטה מחכות לך."))
                 } else {
                     ForEach(Array(store.queue.prefix(2).enumerated().reversed()), id: \.element.id) { i, c in
-                        CandidateCard(c: c)
+                        CandidateCard(c: c, job: jobs.jobs.first(where: { $0.id == store.jobID }))
                             .scaleEffect(i == 0 ? 1 : 0.95)
                             .offset(y: i == 0 ? 0 : 10)
                             .opacity(i == 0 ? 1 : 0.6)
@@ -315,6 +316,7 @@ struct MineView: View {
 
 struct CandidateCard: View {
     let c: Candidate
+    var job: Job? = nil
     @Environment(\.openURL) private var openURL
 
     var body: some View {
@@ -357,10 +359,16 @@ struct CandidateCard: View {
 
             Spacer(minLength: 0)
 
-            if let url = URL(string: c.linkedIn), !c.linkedIn.isEmpty {
-                Button { openURL(url) } label: { Label("פרופיל בלינקדאין", systemImage: "arrow.up.forward.square") }
-                    .font(.subheadline.weight(.semibold))
+            HStack(spacing: 16) {
+                if let url = URL(string: c.linkedIn), !c.linkedIn.isEmpty {
+                    Button { openURL(url) } label: { Label("לינקדאין", systemImage: "arrow.up.forward.square") }
+                }
+                Spacer()
+                if let ask = AskClaude.url(for: c, job: job) {
+                    Button { openURL(ask) } label: { Label("שאל את Claude", systemImage: "sparkles") }
+                }
             }
+            .font(.subheadline.weight(.semibold))
         }
         .padding(18)
         .environment(\.layoutDirection, .rightToLeft)
@@ -378,6 +386,7 @@ struct CandidateCard: View {
 }
 
 struct DecisionList: View {
+    @Environment(JobStore.self) private var jobs
     @Bindable var store: MineStore
     let decision: Decision
     @Environment(\.dismiss) private var dismiss
@@ -401,6 +410,11 @@ struct DecisionList: View {
                     .swipeActions {
                         Button("החזרה לתור") { store.decide(c, nil) }.tint(.gray)
                     }
+                    .swipeActions(edge: .leading) {
+                        if let ask = AskClaude.url(for: c, job: jobs.jobs.first(where: { $0.id == store.jobID })) {
+                            Button { openURL(ask) } label: { Label("Claude", systemImage: "sparkles") }.tint(Theme.tint)
+                        }
+                    }
                 }
             }
             .navigationTitle("\(decision.symbol) \(decision.rawValue) · \(store.list(decision).count)")
@@ -420,3 +434,31 @@ struct DecisionList: View {
     }
 }
 
+
+
+/// Opens the Claude app (or claude.ai) with a ready question about the candidate.
+/// Uses the regular Claude subscription: no API key.
+enum AskClaude {
+    static func url(for c: Candidate, job: Job?) -> URL? {
+        var lines: [String] = []
+        if let job {
+            lines.append("אני מגייס ל\(job.company): \(job.role)\(job.location.isEmpty ? "" : " (\(job.location))").")
+            if !job.notes.isEmpty { lines.append("על המשרה: \(String(job.notes.prefix(300)))") }
+            lines.append("תיאור החברה המלא נמצא ב-Notion, בדף \"\(job.company)\" בטבלת Customers & Pitche.")
+        }
+        lines.append("")
+        lines.append("המועמד: \(c.name), דרגה \(c.grade).")
+        let now = [c.title, c.company].filter { !$0.isEmpty }.joined(separator: " ב-")
+        if !now.isEmpty { lines.append("היום: \(now)\(c.years.map { String(format: ", %.0f שנות ניסיון", $0) } ?? "").") }
+        if !c.career.isEmpty { lines.append("קריירה: " + c.career.joined(separator: " | ")) }
+        if !c.why.isEmpty { lines.append("למה סימנו אותו: \(c.why)") }
+        if !c.linkedIn.isEmpty { lines.append("לינקדאין: \(c.linkedIn)") }
+        lines.append("")
+        lines.append("השאלה שלי: ")
+        var text = lines.joined(separator: "\n")
+        if text.count > 1800 { text = String(text.prefix(1800)) }
+        var comps = URLComponents(string: "https://claude.ai/new")
+        comps?.queryItems = [URLQueryItem(name: "q", value: text)]
+        return comps?.url
+    }
+}
