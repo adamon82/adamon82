@@ -371,6 +371,19 @@ struct CandidateCard: View {
             .font(.subheadline.weight(.semibold))
         }
         .padding(18)
+        .overlay(alignment: .topTrailing) {
+            if let ask = AskClaude.url(for: c, job: job) {
+                Button { openURL(ask) } label: {
+                    Image(systemName: "sparkles")
+                        .font(.title3.weight(.semibold))
+                        .foregroundStyle(Theme.tint)
+                        .frame(width: 44, height: 44)
+                        .background(Theme.tint.opacity(0.12), in: Circle())
+                }
+                .padding(12)
+                .accessibilityLabel("שאל את Claude")
+            }
+        }
         .environment(\.layoutDirection, .rightToLeft)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 24))
@@ -396,24 +409,32 @@ struct DecisionList: View {
         NavigationStack {
             List {
                 ForEach(store.list(decision)) { c in
-                    VStack(alignment: .leading, spacing: 2) {
-                        HStack {
-                            Text(c.name).font(.body.weight(.semibold))
-                            Spacer()
-                            Text(c.grade).font(.caption.weight(.bold)).foregroundStyle(.secondary)
+                    HStack(spacing: 12) {
+                        VStack(alignment: .leading, spacing: 2) {
+                            HStack {
+                                Text(c.name).font(.body.weight(.semibold))
+                                Spacer()
+                                Text(c.grade).font(.caption.weight(.bold)).foregroundStyle(.secondary)
+                            }
+                            Text([c.title, c.company].filter { !$0.isEmpty }.joined(separator: " · "))
+                                .font(.footnote).foregroundStyle(.secondary)
                         }
-                        Text([c.title, c.company].filter { !$0.isEmpty }.joined(separator: " · "))
-                            .font(.footnote).foregroundStyle(.secondary)
+                        .contentShape(Rectangle())
+                        .onTapGesture { if let u = URL(string: c.linkedIn) { openURL(u) } }
+                        if let ask = AskClaude.url(for: c, job: jobs.jobs.first(where: { $0.id == store.jobID })) {
+                            Button { openURL(ask) } label: {
+                                Image(systemName: "sparkles")
+                                    .font(.body.weight(.semibold))
+                                    .foregroundStyle(Theme.tint)
+                                    .frame(width: 40, height: 40)
+                                    .background(Theme.tint.opacity(0.12), in: Circle())
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityLabel("שאל את Claude על \(c.name)")
+                        }
                     }
-                    .contentShape(Rectangle())
-                    .onTapGesture { if let u = URL(string: c.linkedIn) { openURL(u) } }
                     .swipeActions {
                         Button("החזרה לתור") { store.decide(c, nil) }.tint(.gray)
-                    }
-                    .swipeActions(edge: .leading) {
-                        if let ask = AskClaude.url(for: c, job: jobs.jobs.first(where: { $0.id == store.jobID })) {
-                            Button { openURL(ask) } label: { Label("Claude", systemImage: "sparkles") }.tint(Theme.tint)
-                        }
                     }
                 }
             }
